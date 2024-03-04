@@ -1,0 +1,8 @@
+export const GET_GRADE_REQ = "GET_GRADE_REQ";
+export const GET_GRADE_SUCCES = "GET_GRADE_SUCCES";
+export const GET_GRADE_FAIL = "GET_GRADE_FAIL";
+
+export const ADD_GRADE_REQ = "ADD_GRADE_REQ";
+export const ADD_GRADE_SUCCESS = "ADD_GRADE_SUCCESS";
+export const ADD_GRADE_FAIL = "ADD_GRADE_FAIL";
+export const ADD_GRADE_RESET = "ADD_GRADE_RESET";

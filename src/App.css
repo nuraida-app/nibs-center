@@ -1,0 +1,25 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Untuk scrollbar di browser WebKit (misalnya Chrome/Safari) */
+::-webkit-scrollbar {
+  width: 12px; /* Ubah lebar scrollbar sesuai kebutuhan */
+}
+
+/* Track (bagian latar belakang scrollbar) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Warna latar belakang track */
+}
+
+/* Thumb (bagian pegangan scrollbar) */
+::-webkit-scrollbar-thumb {
+  background: #888; /* Warna pegangan scrollbar */
+}
+
+/* Saat thumb digerakkan (hover) */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Warna pegangan scrollbar saat hover */
+}
