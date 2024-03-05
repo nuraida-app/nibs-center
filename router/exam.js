@@ -99,4 +99,44 @@ router.get(
   }
 );
 
+// GET EXAM DETAIL
+router.get(
+  "/:id",
+  authenticatedUser,
+  authorizeRoles("admin", "teacher"),
+  async (req, res) => {
+    try {
+      const data = await client.query(
+        "SELECT exams.exam_name, exams.time, exams.pg, exams.essay, questions._id, questions.exam_id, questions.quiz_type, questions.quiz, questions.img, questions.audio, questions.answer_1, questions.answer_2, questions.answer_3, questions.answer_4, questions.answer_5, questions.key FROM exams LEFT JOIN questions ON exams._id = questions.exam_id WHERE exams._id = $1",
+        [req.params.id]
+      );
+
+      const exam = {
+        exam_name: data.rows[0].exam_name,
+        time: data.rows[0].time,
+        pg: data.rows[0].pg,
+        essay: data.rows[0].essay,
+        questions: data.rows.map((row) => ({
+          _id: row._id,
+          exam_id: row.exam_id,
+          quiz_type: row.quiz_type,
+          quiz: row.quiz,
+          img: row.img,
+          audio: row.audio,
+          answer_1: row.answer_1,
+          answer_2: row.answer_2,
+          answer_3: row.answer_3,
+          answer_4: row.answer_4,
+          answer_5: row.answer_5,
+          key: row.key,
+        })),
+      };
+
+      res.status(200).json(exam);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
 export default router;

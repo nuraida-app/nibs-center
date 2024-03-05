@@ -44,7 +44,7 @@ app.use("/api/class", classRoutes);
 app.use("/api/subject", subjectRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/exams", examRoutes);
-app.use("/api/questions", questionRoutes);
+app.use("/api/quizes", questionRoutes);
 app.use("/api/answers", answerRoutes);
 
 export default app;

@@ -4,7 +4,10 @@ import { client } from "../connection/connection.js";
 export const authenticatedUser = async (req, res, next) => {
   const { token } = req.cookies;
 
-  if (!token) return res.status(401).json({ message: "Unauthorized" });
+  if (!token)
+    return res
+      .status(401)
+      .json({ message: "You are not authorized to access this page" });
 
   const decode = jwt.verify(token, process.env.JWT);
 

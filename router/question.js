@@ -9,7 +9,7 @@ const router = express.Router();
 
 // CREATE QUESTION
 router.post(
-  "/create-question",
+  "/create-quiz",
   authenticatedUser,
   authorizeRoles("admin", "teacher"),
   async (req, res) => {
