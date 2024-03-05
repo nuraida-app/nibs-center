@@ -2,6 +2,10 @@ export const GET_EXAM_REQ = "GET_EXAM_REQ";
 export const GET_EXAM_SUCCESS = "GET_EXAM_SUCCESS";
 export const GET_EXAM_FAIL = "GET_EXAM_FAIL";
 
+export const DETAIL_EXAM_REQ = "DETAIL_EXAM_REQ";
+export const DETAIL_EXAM_SUCCESS = "DETAIL_EXAM_SUCCESS";
+export const DETAIL_EXAM_FAIL = "DETAIL_EXAM_FAIL";
+
 export const ADD_EXAM_REQ = "ADD_EXAM_REQ";
 export const ADD_EXAM_SUCCESS = "ADD_EXAM_SUCCESS";
 export const ADD_EXAM_FAIL = "ADD_EXAM_FAIL";

@@ -34,16 +34,23 @@ const S_Content = () => {
   const [sName, setName] = useState("");
 
   const createSubject = () => {
-    const data = {
-      subject: sName,
-    };
-    dispatch(addSubject(data));
+    if (!sName) {
+      toast.error("Please provide a subject");
+    } else {
+      const data = {
+        subject: sName,
+      };
+      dispatch(addSubject(data));
+    }
   };
 
   useEffect(() => {
     if (sIsAdded) {
       toast.success(sAddSuccess);
+
       dispatch(getSubjects());
+
+      dispatch({ type: ADD_SUBJECT_RESET });
     } else {
       toast.error(sAddError);
 

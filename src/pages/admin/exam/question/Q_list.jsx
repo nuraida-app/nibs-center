@@ -2,11 +2,22 @@ import { Fragment, useEffect } from "react";
 import Topbar from "../../components/topbar/Topbar";
 import { Box } from "@mui/material";
 import SideMenu from "../../components/menu/SideMenu";
-import Lists from "./Lists";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getQuizes } from "../../../../Redux/exam/Q_action";
+import { useParams } from "react-router-dom";
+import { getDetailExam } from "../../../../Redux/exam/E_action";
+import Lists_quiz from "./Lists_quiz";
 
 const Q_list = () => {
   const dispatch = useDispatch();
+
+  const { detail_load, exam_detail } = useSelector((state) => state.exams);
+
+  const params = useParams();
+
+  useEffect(() => {
+    dispatch(getDetailExam(params.id));
+  }, [params]);
 
   return (
     <Fragment>
@@ -42,7 +53,11 @@ const Q_list = () => {
             p: 1,
           }}
         >
-          <Lists />
+          {detail_load ? (
+            <Box>...</Box>
+          ) : (
+            <Lists_quiz data={exam_detail} load={detail_load} />
+          )}
         </Box>
       </Box>
     </Fragment>

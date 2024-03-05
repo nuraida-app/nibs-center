@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import G_Table from "./G_Table";
 import { useDispatch, useSelector } from "react-redux";
 import { addGrade, getGrades } from "../../../Redux/grade/G_action";
+import { ADD_GRADE_RESET } from "../../../Redux/grade/G_const";
 
 const G_Content = () => {
   const dispatch = useDispatch();
@@ -34,11 +35,15 @@ const G_Content = () => {
   const [grade, setGrade] = useState("");
 
   const createGrade = () => {
-    const data = {
-      grade: grade,
-    };
+    if (!grade) {
+      toast.error("Please provide a grade");
+    } else {
+      const data = {
+        grade: grade,
+      };
 
-    dispatch(addGrade(data));
+      dispatch(addGrade(data));
+    }
   };
 
   useEffect(() => {
@@ -48,6 +53,8 @@ const G_Content = () => {
       setGrade("");
 
       dispatch(getGrades());
+
+      dispatch({ type: ADD_GRADE_RESET });
     } else {
       toast.error(gAddError);
     }
@@ -100,6 +107,7 @@ const G_Content = () => {
               placeholder="Add Grade"
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
+              required
             />
 
             <Tooltip title="Add New">

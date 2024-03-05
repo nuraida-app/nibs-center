@@ -3,6 +3,9 @@ import {
   ADD_EXAM_REQ,
   ADD_EXAM_RESET,
   ADD_EXAM_SUCCESS,
+  DETAIL_EXAM_FAIL,
+  DETAIL_EXAM_REQ,
+  DETAIL_EXAM_SUCCESS,
   GET_EXAM_FAIL,
   GET_EXAM_REQ,
   GET_EXAM_SUCCESS,
@@ -11,9 +14,11 @@ import {
 export const getExamsReducer = (state = [], action) => {
   switch (action.type) {
     case GET_EXAM_REQ:
+    case DETAIL_EXAM_REQ:
       return {
         ...state,
         eLoad: true,
+        detail_Load: true,
       };
 
     case GET_EXAM_SUCCESS:
@@ -23,11 +28,23 @@ export const getExamsReducer = (state = [], action) => {
         exams: action.payload,
       };
 
-    case GET_EXAM_FAIL:
+    case DETAIL_EXAM_SUCCESS: {
       return {
         ...state,
         eLoad: false,
+        detail_Load: false,
+        exam_detail: action.payload,
+      };
+    }
+
+    case GET_EXAM_FAIL:
+    case DETAIL_EXAM_FAIL:
+      return {
+        ...state,
+        eLoad: false,
+        detail_Load: false,
         eError: action.payload,
+        detail_error: action.payload,
       };
 
     default:

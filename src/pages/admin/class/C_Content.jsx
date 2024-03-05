@@ -35,11 +35,15 @@ const C_Content = () => {
   const [cName, setName] = useState("");
 
   const createClass = () => {
-    const data = {
-      class: cName,
-    };
+    if (!cName) {
+      toast.error("Please provide a class");
+    } else {
+      const data = {
+        class: cName,
+      };
 
-    dispatch(addClass(data));
+      dispatch(addClass(data));
+    }
   };
 
   useEffect(() => {
@@ -49,6 +53,8 @@ const C_Content = () => {
       setName("");
 
       dispatch(getClasses());
+
+      dispatch({ type: ADD_CLASS_RESET });
     } else {
       toast.error(cAddError);
 
@@ -85,7 +91,7 @@ const C_Content = () => {
 
           <Input
             type="text"
-            placeholder="Seacy Grade"
+            placeholder="Seacy Class"
             value={searchTerm}
             onChange={serachFunction}
           />
@@ -101,7 +107,7 @@ const C_Content = () => {
           >
             <Input
               type="text"
-              placeholder="Add Grade"
+              placeholder="Add Class"
               value={cName}
               onChange={(e) => setName(e.target.value)}
             />

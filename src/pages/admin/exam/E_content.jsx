@@ -29,7 +29,7 @@ const E_content = () => {
     return exam.exam_name.toLowerCase().includes(searchTerm.toLowerCase());
   };
 
-  const examFiltered = exams?.filter(filtered);
+  const examFiltered = Array.isArray(exams) ? exams.filter(filtered) : [];
 
   const searchfunction = (e) => {
     setSearchTerm(e.target.value);
