@@ -1,4 +1,12 @@
-import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Backdrop,
+  Box,
+  Button,
+  IconButton,
+  Modal,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import Loader from "../../../component/Loader/Loader";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
@@ -6,6 +14,8 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import PlaylistRemoveIcon from "@mui/icons-material/PlaylistRemove";
 import { blue, green, grey, orange, red } from "@mui/material/colors";
+import { useRef, useState } from "react";
+import Q_add from "./Q_add";
 
 const createMarkup = (html) => {
   return { __html: html };
@@ -14,6 +24,9 @@ const createMarkup = (html) => {
 const Lists_quiz = ({ data, load }) => {
   const mc = data?.questions.filter((item) => item.quiz_type === 1);
   const e = data?.questions.filter((item) => item.quiz_type === 2);
+
+  const [openAdd, setOpenAdd] = useState(false);
+
   return (
     <Box
       sx={{
@@ -57,7 +70,7 @@ const Lists_quiz = ({ data, load }) => {
 
             <Box sx={{ display: "flex", gap: "10px" }}>
               <Tooltip title="Add">
-                <IconButton>
+                <IconButton onClick={() => setOpenAdd(true)}>
                   <AddCircleIcon sx={{ color: blue[800] }} />
                 </IconButton>
               </Tooltip>
@@ -75,6 +88,18 @@ const Lists_quiz = ({ data, load }) => {
               </Tooltip>
             </Box>
           </Box>
+
+          <Modal
+            open={openAdd}
+            onClose={() => setOpenAdd(false)}
+            closeAfterTransition
+            slots={{ backdrop: Backdrop }}
+            slotProps={{ backdrop: { timeout: 500 } }}
+          >
+            <div ref={useRef(null)}>
+              <Q_add open={openAdd} close={() => setOpenAdd(false)} />
+            </div>
+          </Modal>
 
           <Typography variant="h6" align="center">
             Multiple Choices {`(${mc?.length})`}

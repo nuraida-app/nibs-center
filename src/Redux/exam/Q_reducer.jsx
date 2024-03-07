@@ -65,6 +65,7 @@ export const addQuizReducer = (state = {}, action) => {
         ...state,
         qAddLoad: false,
         qIsAdded: false,
+        qSuccessMsg: null,
         qErrorMsg: null,
       };
 

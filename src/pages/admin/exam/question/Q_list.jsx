@@ -12,12 +12,19 @@ const Q_list = () => {
   const dispatch = useDispatch();
 
   const { detail_load, exam_detail } = useSelector((state) => state.exams);
+  const { qIsAdded } = useSelector((state) => state.q_add);
 
   const params = useParams();
 
   useEffect(() => {
     dispatch(getDetailExam(params.id));
   }, [params]);
+
+  useEffect(() => {
+    if (qIsAdded) {
+      dispatch(getDetailExam(params.id));
+    }
+  }, [qIsAdded, params]);
 
   return (
     <Fragment>
