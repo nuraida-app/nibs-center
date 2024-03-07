@@ -52,7 +52,7 @@ const C_Table = ({ classes, load }) => {
         </Box>
       ) : (
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 650 }}>
+          <TableContainer sx={{ maxHeight: 625 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>

@@ -52,15 +52,7 @@ const SideMenu = () => {
   };
 
   return (
-    <Box
-      sx={{
-        height: "100%",
-        width: "100%",
-        borderRadius: "10px",
-        bgcolor: "#fff",
-        padding: 1,
-      }}
-    >
+    <div>
       <MenuList sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <MenuItem component={Link} to={"/center/admin-dashboard"}>
           <Dashboard sx={{ color: "#90528c", mr: 2 }} />
@@ -189,7 +181,7 @@ const SideMenu = () => {
           </MenuItem>
         </Menu>
       </MenuList>
-    </Box>
+    </div>
   );
 };
 

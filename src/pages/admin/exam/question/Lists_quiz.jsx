@@ -30,7 +30,14 @@ const Lists_quiz = ({ data, load }) => {
         <Loader />
       ) : (
         <>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              bgcolor: "whitesmoke",
+              borderRadius: "5px",
+            }}
+          >
             <Box sx={{ display: "flex", gap: "10px" }}>
               <Button variant="contained" color="error">
                 {data?.exam_name}

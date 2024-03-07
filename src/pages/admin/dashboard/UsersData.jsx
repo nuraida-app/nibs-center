@@ -30,6 +30,7 @@ const UsersData = () => {
         />
       ),
       num: grades?.length,
+      color: "#c8e6f1",
     },
     {
       label: "Classes",
@@ -44,6 +45,7 @@ const UsersData = () => {
         />
       ),
       num: classes?.length,
+      color: "#eedbf1",
     },
     {
       label: "Students",
@@ -58,23 +60,38 @@ const UsersData = () => {
         />
       ),
       num: students?.length,
+      color: "#d9cbf3",
     },
   ];
 
   return (
     <div>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "start",
+          flexWrap: "wrap",
+          gap: "20px",
+          mb: 2,
+          p: 1,
+          bgcolor: "white",
+          borderRadius: "5px",
+        }}
+      >
         {buttons.map((item, index) => (
-          <Button key={index} variant="contained" color="success">
+          <Button
+            key={index}
+            variant="contained"
+            sx={{ bgcolor: item.color, color: "black" }}
+          >
             {item.icon}
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="h5" align="left">
                 {item.num}
               </Typography>
-              <Typography variant="h6" color="#fff">
-                {item.label}
-              </Typography>
+              <Typography>{item.label}</Typography>
             </Box>
           </Button>
         ))}
@@ -96,14 +113,15 @@ const UsersData = () => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column",
+            bgcolor: "whitesmoke",
+            borderRadius: "5px",
           }}
         >
-          <Box sx={{ p: 2, height: 500 }}>
+          <Box sx={{ p: 2, height: 500, flex: 1 }}>
             <GradeChart students={students} grades={grades} />
           </Box>
 
-          <Box sx={{ p: 2, height: 500 }}>
+          <Box sx={{ p: 2, height: 500, flex: 1 }}>
             <ClassChart students={students} classes={classes} />
           </Box>
         </Box>

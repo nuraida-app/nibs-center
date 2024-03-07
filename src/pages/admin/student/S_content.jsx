@@ -66,26 +66,26 @@ const S_content = () => {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: 700,
-        bgcolor: "#fff",
-        borderRadius: "10px",
-        padding: "10px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "20px",
-      }}
-    >
+    <Box>
       {/* FUNCTION */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          bgcolor: "whitesmoke",
+          borderRadius: "5px",
+          mb: 2,
+          p: 1,
         }}
       >
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            alignItems: "center",
+          }}
+        >
           <Box
             sx={{
               display: "flex",

@@ -60,19 +60,18 @@ const G_Content = () => {
     }
   }, [gIsAdded, gAddError, gAddSuccess]);
   return (
-    <Box
-      sx={{
-        minHeight: 790,
-        bgcolor: "#fff",
-        borderRadius: "10px",
-        padding: "10px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "20px",
-      }}
-    >
+    <Box>
       {/* FUNCTION */}
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          bgcolor: "whitesmoke",
+          borderRadius: "5px",
+          mb: 2,
+          p: 1,
+        }}
+      >
         {/* SEARCh */}
         <Box
           sx={{

@@ -18,16 +18,15 @@ const Admin_Subject_Page = () => {
       <Box
         sx={{
           display: "flex",
-          bgcolor: "#acacac",
           position: "relative",
-          top: 64,
-          minHeight: "calc(100vh - 64px)",
+          top: 63,
+          // minHeight: "calc(100vh - 64px)",
         }}
       >
         <Box
           sx={{
-            width: "20%",
-            height: 805,
+            width: "15%",
+            height: "calc(100vh - 63px)",
             position: "fixed",
             left: 0,
             p: 1,
@@ -38,12 +37,13 @@ const Admin_Subject_Page = () => {
 
         <Box
           sx={{
-            width: "80%",
-            maxHeight: 816,
-            overflow: "auto",
+            width: "85%",
+            height: "calc(100vh - 63px)",
+            overflowY: "auto",
             right: 0,
             position: "absolute",
-            p: 1,
+            bgcolor: "#acacac",
+            p: 2,
           }}
         >
           <S_Content />

@@ -62,7 +62,7 @@ const ClassChart = ({ students, classes }) => {
     }
   }, [classes, studentsInClassData]);
 
-  return <canvas id="myChart2" width="500" height="300"></canvas>;
+  return <canvas id="myChart2" width="650px" height="500px"></canvas>;
 };
 
 export default ClassChart;
