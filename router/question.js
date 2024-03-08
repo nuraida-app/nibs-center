@@ -73,4 +73,38 @@ router.get("/exam/:exam_id", authenticatedUser, async (req, res) => {
   }
 });
 
+router.post(
+  "/upload-quiz",
+  authenticatedUser,
+  authorizeRoles("admin", "teacher"),
+  async (req, res) => {
+    try {
+      const { id, data } = req.body;
+
+      data.map(async (item) => {
+        await client.query(
+          "INSERT INTO questions (exam_id, quiz, quiz_type, answer_1, answer_2, answer_3, answer_4, answer_5, key) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+          [
+            id,
+            item[0],
+            item[1],
+            item[2],
+            item[3],
+            item[4],
+            item[5],
+            item[6],
+            item[7],
+          ]
+        );
+      });
+
+      res
+        .status(200)
+        .json({ message: `${data.length} questions successfully added` });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
 export default router;
