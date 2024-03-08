@@ -6,6 +6,9 @@ import {
   GET_QUIZ_FAIL,
   GET_QUIZ_REQ,
   GET_QUIZ_SUCCESS,
+  UPLOAD_QUIZ_FAIL,
+  UPLOAD_QUIZ_REQ,
+  UPLOAD_QUIZ_SUCCESS,
 } from "./Q_const";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE;
@@ -38,5 +41,17 @@ export const addQuiz = (qData) => async (dispatch) => {
     dispatch({ type: ADD_QUIZ_SUCCESS, payload: data.message });
   } catch (error) {
     dispatch({ type: ADD_QUIZ_FAIL, payload: error.response.data.message });
+  }
+};
+
+export const uploadQuiz = (qData) => async (dispatch) => {
+  try {
+    dispatch({ type: UPLOAD_QUIZ_REQ });
+
+    const { data } = await axios.post("/api/quizes/upload-quiz", qData, config);
+
+    dispatch({ type: UPLOAD_QUIZ_SUCCESS, payload: data.message });
+  } catch (error) {
+    dispatch({ type: UPLOAD_QUIZ_FAIL, payload: error.response.data.message });
   }
 };

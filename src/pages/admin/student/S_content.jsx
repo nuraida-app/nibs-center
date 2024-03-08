@@ -56,7 +56,7 @@ const S_content = () => {
   };
 
   const donwload = () => {
-    window, open("/teacher_template.xlsx", "_blank");
+    window, open("/students_templete.xlsx", "_blank");
   };
 
   const reset = () => {

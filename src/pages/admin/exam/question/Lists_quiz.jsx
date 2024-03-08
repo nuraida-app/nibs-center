@@ -16,6 +16,7 @@ import PlaylistRemoveIcon from "@mui/icons-material/PlaylistRemove";
 import { blue, green, grey, orange, red } from "@mui/material/colors";
 import { useRef, useState } from "react";
 import Q_add from "./Q_add";
+import Q_upload from "./Q_upload";
 
 const createMarkup = (html) => {
   return { __html: html };
@@ -26,6 +27,11 @@ const Lists_quiz = ({ data, load }) => {
   const e = data?.questions.filter((item) => item.quiz_type === 2);
 
   const [openAdd, setOpenAdd] = useState(false);
+  const [openUp, setOpenUp] = useState(false);
+
+  const download = () => {
+    window.open("/quiz_templete.xlsx", "_blank");
+  };
 
   return (
     <Box
@@ -76,13 +82,13 @@ const Lists_quiz = ({ data, load }) => {
               </Tooltip>
 
               <Tooltip title="Upload">
-                <IconButton>
+                <IconButton onClick={() => setOpenUp(true)}>
                   <UploadFileIcon sx={{ color: green[800] }} />
                 </IconButton>
               </Tooltip>
 
               <Tooltip title="Templete">
-                <IconButton>
+                <IconButton onClick={download}>
                   <InsertDriveFileIcon sx={{ color: grey[700] }} />
                 </IconButton>
               </Tooltip>
@@ -98,6 +104,18 @@ const Lists_quiz = ({ data, load }) => {
           >
             <div ref={useRef(null)}>
               <Q_add open={openAdd} close={() => setOpenAdd(false)} />
+            </div>
+          </Modal>
+
+          <Modal
+            open={openUp}
+            onClose={() => setOpenUp(false)}
+            closeAfterTransition
+            slots={{ backdrop: Backdrop }}
+            slotProps={{ backdrop: { timeout: 500 } }}
+          >
+            <div ref={useRef(null)}>
+              <Q_upload open={openUp} close={() => setOpenUp(false)} />
             </div>
           </Modal>
 

@@ -6,6 +6,10 @@ import {
   GET_QUIZ_FAIL,
   GET_QUIZ_REQ,
   GET_QUIZ_SUCCESS,
+  UPLOAD_QUIZ_FAIL,
+  UPLOAD_QUIZ_REQ,
+  UPLOAD_QUIZ_RESET,
+  UPLOAD_QUIZ_SUCCESS,
 } from "./Q_const";
 
 export const getQuizesReducer = (state = [], action) => {
@@ -67,6 +71,45 @@ export const addQuizReducer = (state = {}, action) => {
         qIsAdded: false,
         qSuccessMsg: null,
         qErrorMsg: null,
+      };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const quizUploadReducer = (state = [], action) => {
+  switch (action.type) {
+    case UPLOAD_QUIZ_REQ:
+      return {
+        ...state,
+        upLoad: true,
+        isUploaded: false,
+      };
+
+    case UPLOAD_QUIZ_SUCCESS:
+      return {
+        ...state,
+        upLoad: false,
+        isUploaded: true,
+        upSuccessMsg: action.payload,
+      };
+
+    case UPLOAD_QUIZ_FAIL:
+      return {
+        ...state,
+        upLoad: false,
+        isUploaded: false,
+        upErrorMsg: action.payload,
+      };
+
+    case UPLOAD_QUIZ_RESET:
+      return {
+        ...state,
+        upLoad: false,
+        isUploaded: false,
+        upSuccessMsg: null,
+        upErrorMsg: null,
       };
 
     default:

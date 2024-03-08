@@ -18,7 +18,11 @@ import {
   uploadStudentsReducer,
 } from "./Redux/user/S_reducer";
 import { addExamReducer, getExamsReducer } from "./Redux/exam/E_reducer";
-import { addQuizReducer, getQuizesReducer } from "./Redux/exam/Q_reducer";
+import {
+  addQuizReducer,
+  getQuizesReducer,
+  quizUploadReducer,
+} from "./Redux/exam/Q_reducer";
 
 const reducer = {
   auth: authReducer,
@@ -45,6 +49,7 @@ const reducer = {
 
   Quizes: getQuizesReducer,
   q_add: addQuizReducer,
+  q_upload: quizUploadReducer,
 };
 
 const initialState = {};

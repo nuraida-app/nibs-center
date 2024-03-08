@@ -93,7 +93,7 @@ const Q_add = ({ open, close }) => {
     return answers.map((answer, index) => (
       <Box key={index}>
         <Editor
-          apiKey={import.meta.env.VITE_TINYMCCE_KEY}
+          apiKey={import.meta.env.VITE_TINYMCE_KEY}
           onInit={(evt, editor) => (editorRef.current = editor)}
           value={answer}
           init={{

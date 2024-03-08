@@ -13,6 +13,7 @@ const Q_list = () => {
 
   const { detail_load, exam_detail } = useSelector((state) => state.exams);
   const { qIsAdded } = useSelector((state) => state.q_add);
+  const { isUploaded } = useSelector((state) => state.q_upload);
 
   const params = useParams();
 
@@ -25,6 +26,12 @@ const Q_list = () => {
       dispatch(getDetailExam(params.id));
     }
   }, [qIsAdded, params]);
+
+  useEffect(() => {
+    if (isUploaded) {
+      dispatch(getDetailExam(params.id));
+    }
+  }, [isUploaded, params]);
 
   return (
     <Fragment>
