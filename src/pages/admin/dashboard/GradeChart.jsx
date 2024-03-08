@@ -52,7 +52,7 @@ const GradeChart = ({ students, grades }) => {
     }
   }, [grades, studentsInGradeData]);
 
-  return <canvas id="myChart" width="650px" height="500px"></canvas>;
+  return <canvas id="myChart"></canvas>;
 };
 
 export default GradeChart;

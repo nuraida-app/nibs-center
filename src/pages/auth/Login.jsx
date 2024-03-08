@@ -85,7 +85,6 @@ const Login = () => {
       toast.success(message);
       localStorage.setItem("login", JSON.stringify("login"));
 
-      console.log(user);
 
       if (user?.role === "admin") {
         navigate("/center/admin-dashboard");

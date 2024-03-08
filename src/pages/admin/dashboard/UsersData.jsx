@@ -115,13 +115,36 @@ const UsersData = () => {
             display: "flex",
             bgcolor: "whitesmoke",
             borderRadius: "5px",
+            flexDirection: { xs: "column", md: "row" },
           }}
         >
-          <Box sx={{ p: 2, height: 500, flex: 1 }}>
+          <Box
+            sx={{
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "50vh",
+              width: "50%",
+              p: 2,
+              flex: 1,
+            }}
+          >
             <GradeChart students={students} grades={grades} />
           </Box>
 
-          <Box sx={{ p: 2, height: 500, flex: 1 }}>
+          <Box
+            sx={{
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "50vh",
+              width: "50%",
+              p: 2,
+              flex: 1,
+            }}
+          >
             <ClassChart students={students} classes={classes} />
           </Box>
         </Box>

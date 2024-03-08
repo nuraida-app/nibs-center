@@ -23,3 +23,39 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555; /* Warna pegangan scrollbar saat hover */
 }
+
+.sidebar {
+  width: 200px;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+}
+
+.menu {
+  cursor: pointer;
+}
+
+.submenu {
+  background-color: #555;
+  padding: 10px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.submenu.open {
+  max-height: 200px; /* Sesuaikan dengan tinggi submenu */
+}
+
+.submenu ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.submenu li {
+  padding: 5px 0;
+}
+
+.submenu li:hover {
+  background-color: #777;
+}

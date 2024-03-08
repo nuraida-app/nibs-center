@@ -17,7 +17,12 @@ import {
   getStudentsReducers,
   uploadStudentsReducer,
 } from "./Redux/user/S_reducer";
-import { addExamReducer, getExamsReducer } from "./Redux/exam/E_reducer";
+import {
+  addExamReducer,
+  addRoomReducer,
+  getExamsReducer,
+  getRoomsReducer,
+} from "./Redux/exam/E_reducer";
 import {
   addQuizReducer,
   getQuizesReducer,
@@ -50,6 +55,9 @@ const reducer = {
   Quizes: getQuizesReducer,
   q_add: addQuizReducer,
   q_upload: quizUploadReducer,
+
+  rooms: getRoomsReducer,
+  r_add: addRoomReducer,
 };
 
 const initialState = {};
