@@ -10,6 +10,7 @@ import classRoutes from "./router/class.js";
 import subjectRoutes from "./router/subject.js";
 import authRoutes from "./router/authentication.js";
 import examRoutes from "./router/exam.js";
+import roomsRoutes from "./router/rooms.js";
 import questionRoutes from "./router/question.js";
 import answerRoutes from "./router/answer.js";
 
@@ -44,6 +45,7 @@ app.use("/api/class", classRoutes);
 app.use("/api/subject", subjectRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/exams", examRoutes);
+app.use("/api/rooms", roomsRoutes);
 app.use("/api/quizes", questionRoutes);
 app.use("/api/answers", answerRoutes);
 

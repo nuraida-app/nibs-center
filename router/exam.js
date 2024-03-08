@@ -51,7 +51,7 @@ router.get(
   async (req, res) => {
     try {
       const data = await client.query(
-        "SELECT exams._id, exams.exam_name, users.name, subject.subject, exams.time, exams.pg, exams.essay, exams.status, grades.grade, " +
+        "SELECT exams._id, exams.exam_name, exams.teacher_id, users.name, subject.subject, exams.time, exams.pg, exams.essay, exams.status, grades.grade, " +
           "(SELECT COUNT(*) FROM questions WHERE questions.exam_id = exams._id AND questions.quiz_type = 1) AS type_1, " +
           "(SELECT COUNT(*) FROM questions WHERE questions.exam_id = exams._id AND questions.quiz_type = 2) AS type_2 " +
           "FROM exams " +
