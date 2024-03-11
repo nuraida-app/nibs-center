@@ -3,7 +3,9 @@ import { thunk } from "redux-thunk";
 import { authReducer } from "./Redux/auth/auth_reducer";
 import {
   addTeacherReducer,
+  getTeacherDetailReducer,
   getTeachersReducers,
+  updelTeacherReducer,
   uploadTeachersReducer,
 } from "./Redux/user/T_reducer";
 import {
@@ -33,8 +35,10 @@ const reducer = {
   auth: authReducer,
 
   teachers: getTeachersReducers,
+  teacher: getTeacherDetailReducer,
   t_add: addTeacherReducer,
   t_upload: uploadTeachersReducer,
+  t_updel: updelTeacherReducer,
 
   students: getStudentsReducers,
   st_add: addStudentReducer,

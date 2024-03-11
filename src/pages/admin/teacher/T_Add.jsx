@@ -11,23 +11,35 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addTeacher, getTeachers } from "../../../Redux/user/T_action";
+import {
+  addTeacher,
+  getTeachers,
+  updateTeacher,
+} from "../../../Redux/user/T_action";
 import { toast } from "react-toastify";
 import Loader from "../../component/Loader/Loader";
-import { ADD_TEACHER_RESET } from "../../../Redux/user/T_const";
+import {
+  ADD_TEACHER_RESET,
+  DETAIL_TEACHER_RESET,
+  UP_TEACHER_RESET,
+} from "../../../Redux/user/T_const";
 
 const T_Add = ({ open, close }) => {
   const dispatch = useDispatch();
 
   const { subjects, sLoad } = useSelector((state) => state.subjects);
-
+  const { tDetailLoad, teacher } = useSelector((state) => state.teacher);
   const { tAddLoad, tIsAdded, tAddSuccess, tAddError } = useSelector(
     (state) => state.t_add
+  );
+  const { tUp_Load, tIsUpdated, tUp_Success, tUp_error } = useSelector(
+    (state) => state.t_updel
   );
 
   const [nip, setNip] = useState("");
   const [name, setName] = useState("");
   const [s_id, setId] = useState("");
+  const [teacherId, setTeacherId] = useState("");
 
   const addHandler = (e) => {
     e.preventDefault();
@@ -39,7 +51,11 @@ const T_Add = ({ open, close }) => {
       role: "teacher",
     };
 
-    dispatch(addTeacher(data));
+    if (teacherId) {
+      dispatch(updateTeacher(teacherId, data));
+    } else {
+      dispatch(addTeacher(data));
+    }
   };
 
   useEffect(() => {
@@ -58,6 +74,37 @@ const T_Add = ({ open, close }) => {
       dispatch({ type: ADD_TEACHER_RESET });
     }
   }, [tIsAdded, tAddSuccess, tAddError]);
+
+  useEffect(() => {
+    if (teacher) {
+      setNip(teacher.nip);
+      setName(teacher.name);
+      setId(teacher.subject_id);
+      setTeacherId(teacher._id);
+    }
+  }, [teacher]);
+
+  const closeModal = () => {
+    dispatch({ type: DETAIL_TEACHER_RESET });
+
+    close();
+  };
+
+  useEffect(() => {
+    if (tIsUpdated) {
+      toast.success(tUp_Success);
+
+      dispatch(getTeachers());
+
+      dispatch({ type: UP_TEACHER_RESET });
+
+      close();
+    } else {
+      toast.error(tUp_error);
+
+      dispatch({ type: UP_TEACHER_RESET });
+    }
+  }, [tIsUpdated, tUp_Success, tUp_error]);
 
   return (
     <div>
@@ -78,7 +125,7 @@ const T_Add = ({ open, close }) => {
             borderRadius: "5px",
           }}
         >
-          {tAddLoad ? (
+          {tAddLoad || sLoad || tDetailLoad || tUp_Load ? (
             <Loader />
           ) : (
             <form
@@ -95,7 +142,7 @@ const T_Add = ({ open, close }) => {
                 <TextField
                   required
                   type="text"
-                  value={nip}
+                  value={nip || ""}
                   placeholder="Enter nip"
                   onChange={(e) => setNip(e.target.value)}
                 />
@@ -106,7 +153,7 @@ const T_Add = ({ open, close }) => {
                 <TextField
                   required
                   type="text"
-                  value={name}
+                  value={name || ""}
                   placeholder="Full name"
                   onChange={(e) => setName(e.target.value)}
                 />
@@ -116,7 +163,7 @@ const T_Add = ({ open, close }) => {
                 <InputLabel>Subject</InputLabel>
                 <Select
                   required
-                  value={s_id}
+                  value={s_id || ""}
                   onChange={(e) => setId(e.target.value)}
                   label="Choose Subject"
                 >
@@ -139,11 +186,15 @@ const T_Add = ({ open, close }) => {
                   gap: "10px",
                 }}
               >
-                <Button variant="contained" color="error" onClick={close}>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => closeModal()}
+                >
                   cancel
                 </Button>
                 <Button variant="contained" color="success" type="submit">
-                  add
+                  {teacher ? "Update" : "Add"}
                 </Button>
               </Box>
             </form>

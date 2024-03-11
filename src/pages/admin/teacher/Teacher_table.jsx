@@ -1,6 +1,8 @@
 import {
+  Backdrop,
   Box,
   IconButton,
+  Modal,
   Paper,
   Table,
   TableBody,
@@ -14,8 +16,11 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 import { red, yellow } from "@mui/material/colors";
-import { Fragment, useState } from "react";
+import { Fragment, useState, useRef } from "react";
 import Loader from "../../component/Loader/Loader";
+import { useDispatch } from "react-redux";
+import { getTeacherDetail } from "../../../Redux/user/T_action";
+import T_Add from "./T_Add";
 
 const colums = [
   { id: "nip", label: "NIP", minWidth: 90 },
@@ -28,8 +33,12 @@ const colums = [
 ];
 
 const Teacher_table = ({ teachers, load }) => {
+  const dispatch = useDispatch();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [edit, setEdit] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -38,6 +47,12 @@ const Teacher_table = ({ teachers, load }) => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
+  };
+
+  const getDetail = (id) => {
+    setEdit(true);
+
+    dispatch(getTeacherDetail(id));
   };
 
   return (
@@ -91,7 +106,7 @@ const Teacher_table = ({ teachers, load }) => {
                         }}
                       >
                         <Tooltip title="Edit">
-                          <IconButton>
+                          <IconButton onClick={() => getDetail(teacher._id)}>
                             <EditIcon sx={{ color: yellow[800] }} />
                           </IconButton>
                         </Tooltip>
@@ -119,6 +134,18 @@ const Teacher_table = ({ teachers, load }) => {
           />
         </Paper>
       )}
+
+      <Modal
+        open={edit}
+        onClose={() => setEdit(false)}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{ backdrop: { timeout: 500 } }}
+      >
+        <div ref={useRef(null)}>
+          <T_Add open={edit} close={() => setEdit(false)} />
+        </div>
+      </Modal>
     </Fragment>
   );
 };

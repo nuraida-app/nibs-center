@@ -3,6 +3,14 @@ import {
   ADD_TEACHER_REQ,
   ADD_TEACHER_RESET,
   ADD_TEACHER_SUCCESS,
+  DEL_TEACHER_FAIL,
+  DEL_TEACHER_REQ,
+  DEL_TEACHER_RESET,
+  DEL_TEACHER_SUCCESS,
+  DETAIL_TEACHER_FAIL,
+  DETAIL_TEACHER_REQ,
+  DETAIL_TEACHER_RESET,
+  DETAIL_TEACHER_SUCCESS,
   TEACHER_GET_FAIL,
   TEACHER_GET_REQ,
   TEACHER_GET_SUCCESS,
@@ -10,6 +18,10 @@ import {
   UPLOAD_TEACHER_REQ,
   UPLOAD_TEACHER_RESET,
   UPLOAD_TEACHER_SUCCESS,
+  UP_TEACHER_FAIL,
+  UP_TEACHER_REQ,
+  UP_TEACHER_RESET,
+  UP_TEACHER_SUCCESS,
 } from "./T_const";
 
 export const getTeachersReducers = (state = [], action) => {
@@ -102,6 +114,107 @@ export const uploadTeachersReducer = (state = [], action) => {
       return {
         ...state,
         tUploadError: null,
+      };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const getTeacherDetailReducer = (state = {}, action) => {
+  switch (action.type) {
+    case DETAIL_TEACHER_REQ:
+      return {
+        ...state,
+        tDetailLoad: true,
+      };
+
+    case DETAIL_TEACHER_SUCCESS:
+      return {
+        ...state,
+        tDetailLoad: false,
+        teacher: action.payload,
+      };
+
+    case DETAIL_TEACHER_FAIL:
+      return {
+        ...state,
+        tDetailLoad: false,
+        tDetailError: action.payload,
+      };
+
+    case DETAIL_TEACHER_RESET:
+      return {
+        ...state,
+        tDetailError: null,
+        teacher: null,
+      };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const updelTeacherReducer = (state = {}, action) => {
+  switch (action.type) {
+    case UP_TEACHER_REQ:
+    case DEL_TEACHER_REQ:
+      return {
+        ...state,
+        tUp_Load: true,
+        tDel_Load: true,
+      };
+
+    case UP_TEACHER_SUCCESS:
+      return {
+        ...state,
+        tUp_Load: false,
+        tDel_Load: false,
+        tIsUpdated: true,
+        tIsDeleted: false,
+        tUp_Success: action.payload,
+      };
+
+    case DEL_TEACHER_SUCCESS:
+      return {
+        ...state,
+        tUp_Load: false,
+        tDel_Load: false,
+        tIsUpdated: false,
+        tIsDeleted: true,
+        tDel_Success: action.payload,
+      };
+
+    case UP_TEACHER_FAIL:
+      return {
+        ...state,
+        tUp_Load: false,
+        tDel_Load: false,
+        tIsUpdated: false,
+        tIsDeleted: false,
+        tUp_Error: action.payload,
+      };
+
+    case DEL_TEACHER_FAIL:
+      return {
+        ...state,
+        tUp_Load: false,
+        tDel_Load: false,
+        tIsUpdated: false,
+        tIsDeleted: false,
+        tDel_Error: action.payload,
+      };
+
+    case UP_TEACHER_RESET:
+    case DEL_TEACHER_RESET:
+      return {
+        ...state,
+        tUp_Load: false,
+        tDel_Load: false,
+        tIsUpdated: false,
+        tIsDeleted: false,
+        tUp_Error: null,
+        tDel_Error: null,
       };
 
     default:

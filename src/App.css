@@ -6,7 +6,7 @@
 
 /* Untuk scrollbar di browser WebKit (misalnya Chrome/Safari) */
 ::-webkit-scrollbar {
-  width: 12px; /* Ubah lebar scrollbar sesuai kebutuhan */
+  width: 8px; /* Ubah lebar scrollbar sesuai kebutuhan */
 }
 
 /* Track (bagian latar belakang scrollbar) */
