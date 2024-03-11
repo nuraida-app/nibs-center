@@ -155,6 +155,65 @@ router.get(
   }
 );
 
+// GET DETAIL TEACHER
+router.get(
+  "/get-teacher/:id",
+  authenticatedUser,
+  authorizeRoles("admin", "teacher"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const data = await client.query(
+        "SELECT users._id, users.nip, users.name, users.email, users.phone_number, subject.subject_id, subject.subject FROM users INNER JOIN subject ON users.subject_id = subject.subject_id WHERE users._id = $1",
+        [id]
+      );
+
+      const teacher = data.rows[0];
+
+      res.status(200).json(teacher);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// UPDATE TEACHER DATA
+router.put(
+  "/update-teacher/:id",
+  authenticatedUser,
+  authorizeRoles("admin", "teacher"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Menangkap data yang akan diperbarui dari body permintaan
+      const { name, email, phone_number, subject_id } = req.body;
+
+      // Memperbarui data guru dalam database
+      const updatedTeacher = await client.query(
+        "UPDATE users SET name = $1, email = $2, phone_number = $3, subject_id = $4 WHERE _id = $5 RETURNING *",
+        [name, email, phone_number, subject_id, id]
+      );
+
+      if (updatedTeacher.rowCount > 0) {
+        // Jika data guru berhasil diperbarui, kirim respons dengan data yang diperbarui
+        res.status(200).json({
+          message: "Data has been updated",
+          data: updatedTeacher.rows[0],
+        });
+      } else {
+        // Jika data guru tidak ditemukan, kirim respons dengan pesan kesalahan
+        res.status(404).json({ message: "Teacher not found" });
+      }
+    } catch (error) {
+      // Tangani kesalahan yang terjadi selama proses pembaruan data
+      console.error("Error updating teacher:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
+
 // UPLAOD TEACHERS
 router.post(
   "/upload-teachers",
