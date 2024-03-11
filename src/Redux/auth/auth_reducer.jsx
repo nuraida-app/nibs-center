@@ -1,6 +1,7 @@
 import {
   AUTH_FAIL,
   AUTH_REQ,
+  AUTH_RESET,
   AUTH_SUCCESS,
   LOAD_USER_FAIL,
   LOAD_USER_REQ,
@@ -33,6 +34,15 @@ export const authReducer = (state = {}, action) => {
         isAuthenticated: false,
         isAuthLoading: false,
         authError: action.payload,
+      };
+
+    case AUTH_RESET:
+      return {
+        ...state,
+        isAuthenticated: false,
+        isAuthLoading: false,
+        authError: null,
+        user: null,
       };
     default:
       return state;

@@ -193,7 +193,8 @@ const E_add = ({ open, close }) => {
                 sx={{
                   width: "100%",
                   display: "flex",
-                  justifyContent: "space-around",
+                  justifyContent: "end",
+                  gap: "10px",
                 }}
               >
                 <Button variant="contained" color="error" onClick={close}>

@@ -16,6 +16,7 @@ import Loader from "../component/Loader/Loader";
 import { green, red } from "@mui/material/colors";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { AUTH_RESET } from "../../Redux/auth/auth_const";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -85,7 +86,6 @@ const Login = () => {
       toast.success(message);
       localStorage.setItem("login", JSON.stringify("login"));
 
-
       if (user?.role === "admin") {
         navigate("/center/admin-dashboard");
       } else if (user?.role === "teacher") {
@@ -95,6 +95,10 @@ const Login = () => {
       }
     } else {
       toast.error(authError);
+
+      dispatch({ type: AUTH_RESET });
+
+      localStorage.removeItem("login");
     }
   }, [isAuthenticated, message, authError, user]);
 

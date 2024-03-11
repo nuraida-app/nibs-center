@@ -12,12 +12,20 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../../component/Loader/Loader";
+import { addRoom, getRooms } from "../../../../Redux/exam/E_action";
+import { ADD__ROOM_RESET } from "../../../../Redux/exam/E_const";
+import { toast } from "react-toastify";
 
 const R_add = ({ open, close }) => {
+  const dispatch = useDispatch();
+
   const { exams, eLoad } = useSelector((state) => state.exams);
+  const { rAddLoad, rIsAdded, rSuccessMsg, rErrorMsg } = useSelector(
+    (state) => state.r_add
+  );
 
   const [isScheduled, setSchedule] = useState("1");
 
@@ -46,8 +54,27 @@ const R_add = ({ open, close }) => {
 
   const handleDateTimeChange = (newDateTime) => {
     const dateObj = new Date(newDateTime);
-    setDate(dateObj.toISOString().slice(0, 10)); // Ambil tanggal dalam format YYYY-MM-DD
-    setTime(dateObj.toISOString().slice(11, 16)); // Ambil waktu dalam format HH:MM
+
+    // Mendapatkan offset zona waktu dalam menit
+    const timezoneOffset = dateObj.getTimezoneOffset();
+
+    // Menambahkan offset zona waktu agar waktu yang diambil sesuai dengan zona waktu yang dipilih
+    dateObj.setMinutes(dateObj.getMinutes() - timezoneOffset);
+
+    // Mengambil bagian-bagian dari tanggal
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Tambahkan padding nol jika perlu
+    const day = String(dateObj.getDate()).padStart(2, "0"); // Tambahkan padding nol jika perlu
+
+    // Menggabungkan kembali ke dalam format yang diinginkan
+    const formattedDate = `${day}-${month}-${year}`;
+
+    // Ambil waktu dalam format HH:MM
+    const formattedTime = dateObj.toISOString().slice(11, 16);
+
+    // Set state tanggal dan waktu
+    setDate(formattedDate);
+    setTime(formattedTime);
   };
 
   const createRoom = (e) => {
@@ -62,8 +89,32 @@ const R_add = ({ open, close }) => {
       time_start: time,
     };
 
-    console.log(data);
+    dispatch(addRoom(data));
   };
+
+  useEffect(() => {
+    if (rIsAdded) {
+      toast.success(rSuccessMsg);
+
+      setDate("");
+      setTime("");
+      setDescription("");
+      setName("");
+      setSelectedExam("");
+      setT("");
+      setE("");
+
+      dispatch(getRooms());
+
+      dispatch({ type: ADD__ROOM_RESET });
+
+      close();
+    } else {
+      toast.error(rErrorMsg);
+
+      dispatch({ type: ADD__ROOM_RESET });
+    }
+  }, [rIsAdded, rSuccessMsg, rErrorMsg]);
 
   return (
     <div>
@@ -84,7 +135,7 @@ const R_add = ({ open, close }) => {
             borderRadius: "5px",
           }}
         >
-          {eLoad ? (
+          {eLoad || rAddLoad ? (
             <Box
               sx={{
                 height: "100%",
@@ -159,13 +210,15 @@ const R_add = ({ open, close }) => {
                 </LocalizationProvider>
               )}
 
-              <Button variant="contained" color="error" onClick={close}>
-                cancel
-              </Button>
+              <Box sx={{ display: "flex", justifyContent: "end", gap: "10px" }}>
+                <Button variant="contained" color="error" onClick={close}>
+                  cancel
+                </Button>
 
-              <Button variant="contained" color="primary" type="submit">
-                Add
-              </Button>
+                <Button variant="contained" color="primary" type="submit">
+                  Add
+                </Button>
+              </Box>
             </form>
           )}
         </Box>

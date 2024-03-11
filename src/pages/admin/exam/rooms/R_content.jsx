@@ -13,10 +13,14 @@ import FolderDeleteIcon from "@mui/icons-material/FolderDelete";
 import { blue, red } from "@mui/material/colors";
 import { useState, useRef, useEffect } from "react";
 import R_add from "./R_add";
+import R_table from "./R_table";
+import { useSelector } from "react-redux";
 
 const R_content = () => {
   const [add, setAdd] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const { r_load, rooms } = useSelector((state) => state.rooms);
 
   return (
     <Box>
@@ -61,6 +65,8 @@ const R_content = () => {
           </Tooltip>
         </Box>
       </Box>
+
+      <R_table rooms={rooms} load={r_load} />
 
       <Modal
         open={add}

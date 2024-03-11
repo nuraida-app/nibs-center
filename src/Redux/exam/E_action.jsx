@@ -90,7 +90,7 @@ export const addRoom = (rData) => async (dispatch) => {
   try {
     dispatch({ type: ADD__ROOM_REQ });
 
-    const { data } = await axios.post("/api/exams/create-room", rData, config);
+    const { data } = await axios.post("/api/rooms/create-room", rData, config);
 
     dispatch({ type: ADD__ROOM_SUCCESS, payload: data.message });
   } catch (error) {
