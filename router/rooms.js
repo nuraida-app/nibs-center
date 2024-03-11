@@ -16,13 +16,17 @@ router.get(
     try {
       const admin = req.user.role === "admin"; // Menentukan apakah pengguna adalah admin
       if (admin) {
-        const data = await client.query("SELECT * FROM exam_rooms");
+        const data = await client.query(
+          "SELECT exam_rooms.name, exams.exam_name, grades.grade, exam_rooms.status, exam_rooms.code, exam_rooms.date_start, exam_rooms.time_start " +
+            "FROM exam_rooms " +
+            "INNER JOIN exams on exam_rooms.exam_id = exams._id INNER JOIN grades on exams.grade_id = grades.grade_id"
+        );
 
         const rooms = data.rows;
         return res.status(200).json(rooms);
       } else {
         const data = await client.query(
-          "SELECT * FROM exam_rooms WHERE teacher_id = $1 ORDER BY name ASC",
+          "SELECT exam_rooms.name, exams.exam_name, grades.grade, exam_rooms.status, exam_rooms.code FROM exam_rooms INNER JOIN exams on exam_rooms.exam_id = exams._id WHERE teacher_id = $1 ORDER BY name ASC",
           [req.user._id]
         );
 
@@ -30,6 +34,7 @@ router.get(
         return res.status(200).json(rooms);
       }
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ error: error.message });
     }
   }
