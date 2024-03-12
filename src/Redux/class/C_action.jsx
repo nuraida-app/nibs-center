@@ -3,6 +3,9 @@ import {
   ADD_CLASS_FAIL,
   ADD_CLASS_REQ,
   ADD_CLASS_SUCCESS,
+  DELETE_CLASS_FAIL,
+  DELETE_CLASS_REQ,
+  DELETE_CLASS_SUCCESS,
   GET_CLASS_FAIL,
   GET_CLASS_REQ,
   GET_CLASS_SUCCESS,
@@ -43,6 +46,24 @@ export const addClass = (cData) => async (dispatch) => {
     dispatch({
       type: ADD_CLASS_FAIL,
       payload: error.response.data || error.response.data.message,
+    });
+  }
+};
+
+export const deleteClass = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: DELETE_CLASS_REQ });
+
+    const { data } = await axios.delete(
+      `/api/class/delete-class/${id}`,
+      config
+    );
+
+    dispatch({ type: DELETE_CLASS_SUCCESS, payload: data.message });
+  } catch (error) {
+    dispatch({
+      type: DELETE_CLASS_FAIL,
+      paylaod: error.response.data.error || error.response.data.message,
     });
   }
 };

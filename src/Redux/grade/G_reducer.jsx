@@ -3,6 +3,10 @@ import {
   ADD_GRADE_REQ,
   ADD_GRADE_RESET,
   ADD_GRADE_SUCCESS,
+  DEL_GRADE_FAIL,
+  DEL_GRADE_REQ,
+  DEL_GRADE_RESET,
+  DEL_GRADE_SUCCESS,
   GET_GRADE_FAIL,
   GET_GRADE_REQ,
   GET_GRADE_SUCCES,
@@ -64,6 +68,45 @@ export const addGradeReducer = (state = {}, action) => {
       return {
         ...state,
         gAddError: null,
+        gAddSuccess: null,
+      };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const delGradeReducer = (state = {}, action) => {
+  switch (action.type) {
+    case DEL_GRADE_REQ:
+      return {
+        ...state,
+        gDelLoad: true,
+        gIsDeleted: false,
+      };
+
+    case DEL_GRADE_SUCCESS:
+      return {
+        ...state,
+        gDelLoad: false,
+        gIsDeleted: true,
+        gDelSuccess: action.payload,
+      };
+
+    case DEL_GRADE_FAIL:
+      return {
+        ...state,
+        gDelLoad: false,
+        gIsDeleted: false,
+        gDelError: action.payload,
+      };
+
+    case DEL_GRADE_RESET:
+      return {
+        ...state,
+        gDelLoad: null,
+        gIsDeleted: null,
+        gDelError: null,
       };
 
     default:

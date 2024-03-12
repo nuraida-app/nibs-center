@@ -16,11 +16,17 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 import { red, yellow } from "@mui/material/colors";
-import { Fragment, useState, useRef } from "react";
+import { Fragment, useState, useRef, useEffect } from "react";
 import Loader from "../../component/Loader/Loader";
-import { useDispatch } from "react-redux";
-import { getTeacherDetail } from "../../../Redux/user/T_action";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteTeacher,
+  getTeacherDetail,
+  getTeachers,
+} from "../../../Redux/user/T_action";
 import T_Add from "./T_Add";
+import { toast } from "react-toastify";
+import { DEL_TEACHER_RESET } from "../../../Redux/user/T_const";
 
 const colums = [
   { id: "nip", label: "NIP", minWidth: 90 },
@@ -55,9 +61,32 @@ const Teacher_table = ({ teachers, load }) => {
     dispatch(getTeacherDetail(id));
   };
 
+  // DELETE
+
+  const { tDel_Load, tIsDeleted, tDel_Success, tDel_Error } = useSelector(
+    (state) => state.t_updel
+  );
+
+  const delTeacher = (id) => {
+    dispatch(deleteTeacher(id));
+  };
+
+  useEffect(() => {
+    if (tIsDeleted) {
+      toast.success(tDel_Success);
+
+      dispatch({ type: DEL_TEACHER_RESET });
+      dispatch(getTeachers());
+    } else {
+      toast.error(tDel_Error);
+
+      dispatch({ type: DEL_TEACHER_RESET });
+    }
+  }, [tIsDeleted, tDel_Success, tDel_Error]);
+
   return (
     <Fragment>
-      {load ? (
+      {load || tDel_Load ? (
         <Box
           sx={{
             width: "100%",
@@ -86,7 +115,13 @@ const Teacher_table = ({ teachers, load }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {teachers?.map((teacher, index) => (
+                {(rowsPerPage > 0
+                  ? teachers?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : teachers
+                )?.map((teacher, index) => (
                   <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                     <TableCell align="center">{teacher.nip}</TableCell>
                     <TableCell align="center">{teacher.name}</TableCell>
@@ -112,7 +147,7 @@ const Teacher_table = ({ teachers, load }) => {
                         </Tooltip>
 
                         <Tooltip title="Remove">
-                          <IconButton>
+                          <IconButton onClick={() => delTeacher(teacher._id)}>
                             <PersonRemoveAlt1Icon sx={{ color: red[500] }} />
                           </IconButton>
                         </Tooltip>

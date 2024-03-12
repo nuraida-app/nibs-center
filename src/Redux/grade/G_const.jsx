@@ -6,3 +6,8 @@ export const ADD_GRADE_REQ = "ADD_GRADE_REQ";
 export const ADD_GRADE_SUCCESS = "ADD_GRADE_SUCCESS";
 export const ADD_GRADE_FAIL = "ADD_GRADE_FAIL";
 export const ADD_GRADE_RESET = "ADD_GRADE_RESET";
+
+export const DEL_GRADE_REQ = "DEL_GRADE_REQ";
+export const DEL_GRADE_SUCCESS = "DEL_GRADE_SUCCESS";
+export const DEL_GRADE_FAIL = "DEL_GRADE_FAIL";
+export const DEL_GRADE_RESET = "DEL_GRADE_RESET";

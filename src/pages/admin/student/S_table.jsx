@@ -1,6 +1,8 @@
 import {
+  Backdrop,
   Box,
   IconButton,
+  Modal,
   Paper,
   Table,
   TableBody,
@@ -14,8 +16,17 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 import { red, yellow } from "@mui/material/colors";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Loader from "../../component/Loader/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteStudent,
+  getStudentDetail,
+  getStudents,
+} from "../../../Redux/user/S_action";
+import { toast } from "react-toastify";
+import { DEL_STUDENT_RESET } from "../../../Redux/user/S_const";
+import S_add from "./S_add";
 
 const columns = [
   { id: "nis", label: "NIS", minWidth: 90 },
@@ -26,6 +37,8 @@ const columns = [
 ];
 
 const S_table = ({ students, load }) => {
+  const dispatch = useDispatch();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -38,9 +51,38 @@ const S_table = ({ students, load }) => {
     setPage(0);
   };
 
+  const getDetail = (id) => {
+    dispatch(getStudentDetail(id));
+
+    setEdit(true);
+  };
+
+  // DELETE
+  const { sUpDelLoad, sIsDeleted, sDelMsg, sDelError } = useSelector(
+    (state) => state.st_updel
+  );
+
+  const [edit, setEdit] = useState(false);
+
+  const delStudent = (id) => dispatch(deleteStudent(id));
+
+  useEffect(() => {
+    if (sIsDeleted) {
+      toast.success(sDelMsg);
+
+      dispatch(getStudents());
+
+      dispatch({ type: DEL_STUDENT_RESET });
+    } else {
+      toast.error(sDelError);
+
+      dispatch({ type: DEL_STUDENT_RESET });
+    }
+  }, [sIsDeleted, sDelMsg, sDelError]);
+
   return (
     <Fragment>
-      {load ? (
+      {load || sUpDelLoad ? (
         <Box
           sx={{
             height: "100%",
@@ -91,13 +133,14 @@ const S_table = ({ students, load }) => {
                         }}
                       >
                         <Tooltip title="Edit">
-                          <IconButton>
+                          <IconButton onClick={() => getDetail(student._id)}>
                             <EditIcon sx={{ color: yellow[800] }} />
                           </IconButton>
                         </Tooltip>
+
                         <Tooltip title="Remove">
-                          <IconButton>
-                            <PersonRemoveAlt1Icon sx={{ color: red[500] }} />
+                          <IconButton onClick={() => delStudent(student._id)}>
+                            <PersonRemoveAlt1Icon sx={{ color: red[800] }} />
                           </IconButton>
                         </Tooltip>
                       </Box>
@@ -118,6 +161,18 @@ const S_table = ({ students, load }) => {
           />
         </Paper>
       )}
+
+      <Modal
+        open={edit}
+        onClose={() => setEdit(false)}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{ backdrop: { timeout: 500 } }}
+      >
+        <div ref={useRef(null)}>
+          <S_add open={edit} close={() => setEdit(false)} />
+        </div>
+      </Modal>
     </Fragment>
   );
 };

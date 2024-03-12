@@ -13,8 +13,16 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Loader from "../../component/Loader/Loader";
-import { addStudent, getStudents } from "../../../Redux/user/S_action";
-import { ADD_STUDENT_RESET } from "../../../Redux/user/S_const";
+import {
+  addStudent,
+  getStudents,
+  updateStudent,
+} from "../../../Redux/user/S_action";
+import {
+  ADD_STUDENT_RESET,
+  DETAIL_STUDENT_RESET,
+  UP_STUDENT_RESET,
+} from "../../../Redux/user/S_const";
 
 const S_add = ({ open, close }) => {
   const dispatch = useDispatch();
@@ -22,14 +30,16 @@ const S_add = ({ open, close }) => {
   const { grades, gLoad } = useSelector((state) => state.grades);
   const { classes, cLoad } = useSelector((state) => state.classes);
 
-  const { sAddLoad, sIsAdded, sAddSuccess, sAddError } = useSelector(
-    (state) => state.st_add
-  );
-
   const [nis, setNis] = useState("");
   const [name, setName] = useState("");
   const [g_id, setGid] = useState("");
   const [c_id, setCid] = useState("");
+  const [s_id, setSid] = useState("");
+
+  // ADD
+  const { sAddLoad, sIsAdded, sAddSuccess, sAddError } = useSelector(
+    (state) => state.st_add
+  );
 
   const addHandler = (e) => {
     e.preventDefault();
@@ -42,9 +52,14 @@ const S_add = ({ open, close }) => {
       role: "student",
     };
 
-    dispatch(addStudent(data));
+    if (s_id) {
+      dispatch(updateStudent(s_id, data));
+    } else {
+      dispatch(addStudent(data));
+    }
   };
 
+  // ADD
   useEffect(() => {
     if (sIsAdded) {
       toast.success(sAddSuccess);
@@ -65,6 +80,46 @@ const S_add = ({ open, close }) => {
     }
   }, [sIsAdded, sAddSuccess, sAddError]);
 
+  // UPDATE
+  const { sUpDelLoad, sIsUpdated, sUpMsg, sUpError } = useSelector(
+    (state) => state.st_updel
+  );
+  const { sDetailLoad, student, sDetailError } = useSelector(
+    (state) => state.student
+  );
+
+  useEffect(() => {
+    if (student) {
+      setName(student.name);
+      setNis(student.nis);
+      setSid(student._id);
+      setCid(student.class_id);
+      setGid(student.grade_id);
+    }
+  }, [student]);
+
+  useEffect(() => {
+    if (sIsUpdated) {
+      toast.success(sUpMsg);
+
+      dispatch(getStudents());
+
+      dispatch({ type: UP_STUDENT_RESET });
+
+      close();
+    } else {
+      toast.error(sUpError);
+
+      dispatch({ type: UP_STUDENT_RESET });
+    }
+  }, [sIsUpdated, sUpMsg, sUpError]);
+
+  const cancel = () => {
+    close();
+
+    dispatch({ type: DETAIL_STUDENT_RESET });
+  };
+
   return (
     <div>
       <Fade in={open}>
@@ -84,7 +139,7 @@ const S_add = ({ open, close }) => {
             borderRadius: "5px",
           }}
         >
-          {sAddLoad || cLoad || gLoad ? (
+          {sAddLoad || cLoad || gLoad || sDetailLoad || sUpDelLoad ? (
             <Loader />
           ) : (
             <form
@@ -158,7 +213,7 @@ const S_add = ({ open, close }) => {
                   gap: "10px",
                 }}
               >
-                <Button variant="contained" color="error" onClick={close}>
+                <Button variant="contained" color="error" onClick={cancel}>
                   cancel
                 </Button>
                 <Button variant="contained" color="success" type="submit">

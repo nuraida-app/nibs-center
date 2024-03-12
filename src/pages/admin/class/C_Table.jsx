@@ -14,8 +14,12 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { red, yellow } from "@mui/material/colors";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Loader from "../../component/Loader/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteClass, getClasses } from "../../../Redux/class/C_action";
+import { toast } from "react-toastify";
+import { DELETE_CLASS_RESET } from "../../../Redux/class/C_const";
 
 const colums = [
   { id: "id", label: "ID", minWidth: 90 },
@@ -24,6 +28,8 @@ const colums = [
 ];
 
 const C_Table = ({ classes, load }) => {
+  const dispatch = useDispatch();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -36,9 +42,30 @@ const C_Table = ({ classes, load }) => {
     setPage(0);
   };
 
+  // DELETE
+  const { cDelLoad, cIsDeleted, cDelSuccess, cDelError } = useSelector(
+    (state) => state.del_class
+  );
+
+  const delClass = (id) => dispatch(deleteClass(id));
+
+  useEffect(() => {
+    if (cIsDeleted) {
+      toast.success(cDelSuccess);
+
+      dispatch({ type: DELETE_CLASS_RESET });
+
+      dispatch(getClasses());
+    } else {
+      toast.error(cDelError);
+
+      dispatch({ type: DELETE_CLASS_RESET });
+    }
+  }, [cIsDeleted, cDelSuccess, cDelError]);
+
   return (
     <Fragment>
-      {load ? (
+      {load || cDelLoad ? (
         <Box
           sx={{
             height: "100%",
@@ -68,7 +95,13 @@ const C_Table = ({ classes, load }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {classes?.map((item) => (
+                {(rowsPerPage > 0
+                  ? classes?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : classes
+                )?.map((item) => (
                   <TableRow
                     hover
                     role="checkbox"
@@ -91,13 +124,8 @@ const C_Table = ({ classes, load }) => {
                           justifyContent: "space-around",
                         }}
                       >
-                        <Tooltip title="Edit">
-                          <IconButton>
-                            <EditIcon sx={{ color: yellow[800] }} />
-                          </IconButton>
-                        </Tooltip>
                         <Tooltip title="Delete">
-                          <IconButton>
+                          <IconButton onClick={() => delClass(item.class_id)}>
                             <RemoveCircleIcon sx={{ color: red[500] }} />
                           </IconButton>
                         </Tooltip>

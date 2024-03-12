@@ -3,6 +3,9 @@ import {
   ADD_TEACHER_FAIL,
   ADD_TEACHER_REQ,
   ADD_TEACHER_SUCCESS,
+  DEL_TEACHER_FAIL,
+  DEL_TEACHER_REQ,
+  DEL_TEACHER_SUCCESS,
   DETAIL_TEACHER_FAIL,
   DETAIL_TEACHER_REQ,
   DETAIL_TEACHER_SUCCESS,
@@ -100,5 +103,21 @@ export const updateTeacher = (id, tData) => async (dispatch) => {
     dispatch({ type: UP_TEACHER_SUCCESS, payload: data.message });
   } catch (error) {
     dispatch({ type: UP_TEACHER_FAIL, payload: error.response.data.message });
+  }
+};
+
+export const deleteTeacher = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: DEL_TEACHER_REQ });
+
+    const { data } = await axios.delete(
+      `/api/users/delete-teacher/${id}`,
+      config
+    );
+
+    dispatch({ type: DEL_TEACHER_SUCCESS, payload: data.message });
+  } catch (error) {
+    console.log(error);
+    dispatch({ type: DEL_TEACHER_FAIL, payload: error.response.data.message });
   }
 };

@@ -12,11 +12,21 @@ import {
   addSubjectReducer,
   getSubjectReducer,
 } from "./Redux/subject/S_reducer";
-import { addGradeReducer, getGradesReducer } from "./Redux/grade/G_reducer";
-import { addClassReducer, getClassesReducer } from "./Redux/class/C_reducer";
+import {
+  addGradeReducer,
+  delGradeReducer,
+  getGradesReducer,
+} from "./Redux/grade/G_reducer";
+import {
+  addClassReducer,
+  delClassReducer,
+  getClassesReducer,
+} from "./Redux/class/C_reducer";
 import {
   addStudentReducer,
+  getStudentDetailReducer,
   getStudentsReducers,
+  updelSudentReducer,
   uploadStudentsReducer,
 } from "./Redux/user/S_reducer";
 import {
@@ -41,14 +51,18 @@ const reducer = {
   t_updel: updelTeacherReducer,
 
   students: getStudentsReducers,
+  student: getStudentDetailReducer,
   st_add: addStudentReducer,
   st_upload: uploadStudentsReducer,
+  st_updel: updelSudentReducer,
 
   grades: getGradesReducer,
   g_add: addGradeReducer,
+  del_grade: delGradeReducer,
 
   classes: getClassesReducer,
   c_add: addClassReducer,
+  del_class: delClassReducer,
 
   subjects: getSubjectReducer,
   s_add: addSubjectReducer,

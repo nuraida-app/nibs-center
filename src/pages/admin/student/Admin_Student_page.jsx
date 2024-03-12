@@ -7,6 +7,7 @@ import { getStudents } from "../../../Redux/user/S_action";
 import { getGrades } from "../../../Redux/grade/G_action";
 import { getClasses } from "../../../Redux/class/C_action";
 import S_content from "./S_content";
+import { DETAIL_STUDENT_RESET } from "../../../Redux/user/S_const";
 
 const Admin_Student_page = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,8 @@ const Admin_Student_page = () => {
     dispatch(getGrades());
 
     dispatch(getClasses());
+
+    dispatch({ type: DETAIL_STUDENT_RESET });
   }, []);
   return (
     <Fragment>

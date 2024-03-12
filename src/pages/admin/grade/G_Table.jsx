@@ -11,11 +11,14 @@ import {
   TableRow,
   Tooltip,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { red, yellow } from "@mui/material/colors";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Loader from "../../component/Loader/Loader";
+import { deleteGrade, getGrades } from "../../../Redux/grade/G_action";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { DEL_GRADE_RESET } from "../../../Redux/grade/G_const";
 
 const colums = [
   { id: "id", label: "ID", minWidth: 90 },
@@ -24,6 +27,8 @@ const colums = [
 ];
 
 const G_Table = ({ grades, load }) => {
+  const dispatch = useDispatch();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -36,9 +41,30 @@ const G_Table = ({ grades, load }) => {
     setPage(0);
   };
 
+  // DELETE
+  const { gDelLoad, gIsDeleted, gDelSuccess, gDelError } = useSelector(
+    (state) => state.del_grade
+  );
+
+  const delGrade = (id) => dispatch(deleteGrade(id));
+
+  useEffect(() => {
+    if (gIsDeleted) {
+      toast.success(gDelSuccess);
+
+      dispatch({ type: DEL_GRADE_RESET });
+
+      dispatch(getGrades());
+    } else {
+      toast.error(gDelError);
+
+      dispatch({ type: DEL_GRADE_RESET });
+    }
+  }, [gDelLoad, gIsDeleted, gDelSuccess, gDelSuccess]);
+
   return (
     <Fragment>
-      {load ? (
+      {load || gDelLoad ? (
         <Box
           sx={{
             height: "100%",
@@ -68,7 +94,13 @@ const G_Table = ({ grades, load }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {grades?.map((item) => (
+                {(rowsPerPage > 0
+                  ? grades?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : grades
+                )?.map((item) => (
                   <TableRow
                     hover
                     role="checkbox"
@@ -91,13 +123,8 @@ const G_Table = ({ grades, load }) => {
                           justifyContent: "space-around",
                         }}
                       >
-                        <Tooltip title="Edit">
-                          <IconButton>
-                            <EditIcon sx={{ color: yellow[800] }} />
-                          </IconButton>
-                        </Tooltip>
                         <Tooltip title="Delete">
-                          <IconButton>
+                          <IconButton onClick={() => delGrade(item.grade_id)}>
                             <RemoveCircleIcon sx={{ color: red[500] }} />
                           </IconButton>
                         </Tooltip>

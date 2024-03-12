@@ -57,6 +57,8 @@ const G_Content = () => {
       dispatch({ type: ADD_GRADE_RESET });
     } else {
       toast.error(gAddError);
+
+      dispatch({ type: ADD_GRADE_RESET });
     }
   }, [gIsAdded, gAddError, gAddSuccess]);
   return (
