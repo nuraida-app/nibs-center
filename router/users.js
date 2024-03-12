@@ -214,6 +214,34 @@ router.put(
   }
 );
 
+// DELETE TEACHER
+router.delete(
+  "/delete-teacher/:id",
+  authenticatedUser,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      const id = req.params.id;
+
+      const data = await client.query(
+        "DELETE FROM users WHERE _id = $1 RETURNING *",
+        [id]
+      );
+
+      if (data.rows.length === 0) {
+        return res.status(404).json({ message: "Teacher not found" });
+      }
+
+      res.status(200).json({
+        message: "Teacher deleted successfully",
+        deletedTeacher: data.rows[0],
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
+
 // UPLAOD TEACHERS
 router.post(
   "/upload-teachers",
@@ -255,12 +283,101 @@ router.get(
   async (req, res) => {
     try {
       const data = await client.query(
-        "SELECT u.nis, u.name, g.grade, c.class FROM users u INNER JOIN grades g ON u.grade_id = g.grade_id INNER JOIN class c ON u.class_id = c.class_id WHERE u.role = 'student' ORDER BY CAST(SUBSTRING(c.class, 1, LENGTH(c.class) - 1) AS INTEGER), SUBSTRING(c.class, LENGTH(c.class)) ASC, u.name ASC"
+        "SELECT u._id, u.nis, u.name, g.grade, c.class FROM users u INNER JOIN grades g ON u.grade_id = g.grade_id INNER JOIN class c ON u.class_id = c.class_id WHERE u.role = 'student' ORDER BY CAST(SUBSTRING(c.class, 1, LENGTH(c.class) - 1) AS INTEGER), SUBSTRING(c.class, LENGTH(c.class)) ASC, u.name ASC"
       );
 
       return res.status(200).json(data.rows);
     } catch (error) {
       return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// DETAIL STUDENT
+router.get(
+  "/student-detail/:id",
+  authenticatedUser,
+  authorizeRoles("admin", "student"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const data = await client.query(
+        "SELECT users._id, users.nis, users.name, users.grade_id, grades.grade, users.class_id, class.class FROM users " +
+          "INNER JOIN grades ON users.grade_id = grades.grade_id " +
+          "INNER JOIN class ON users.class_id = class.class_id " +
+          "WHERE users._id = $1",
+        [id]
+      );
+
+      const student = data.rows[0];
+
+      res.status(200).json(student);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// UPDATE TEACHER DATA
+router.put(
+  "/student-update/:id",
+  authenticatedUser,
+  authorizeRoles("admin", "student"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Menangkap data yang akan diperbarui dari body permintaan
+      const { nis, name, grade_id, class_id } = req.body;
+
+      // Memperbarui data murid dalam database
+      const updatedStudent = await client.query(
+        "UPDATE users SET nis = $1, name = $2, grade_id = $3, class_id = $4 WHERE _id = $5 RETURNING *",
+        [nis, name, grade_id, class_id, id]
+      );
+
+      if (updatedStudent.rowCount > 0) {
+        // Jika data murid berhasil diperbarui, kirim respons dengan data yang diperbarui
+        res.status(200).json({
+          message: "Data has been updated",
+          data: updatedStudent.rows[0],
+        });
+      } else {
+        // Jika data murid tidak ditemukan, kirim respons dengan pesan kesalahan
+        res.status(404).json({ message: "Student not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
+
+// DELETE STUDENT
+router.delete(
+  "/student-delete/:id",
+  authenticatedUser,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      const id = req.params.id;
+
+      const data = await client.query(
+        "DELETE FROM users WHERE _id = $1 RETURNING *",
+        [id]
+      );
+
+      if (data.rows.length === 0) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+
+      res.status(200).json({
+        message: "Student deleted successfully",
+        deletedStudent: data.rows[0],
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error" });
     }
   }
 );

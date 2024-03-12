@@ -53,4 +53,22 @@ router.get(
   }
 );
 
+router.delete(
+  "/delete-grade/:id",
+  authenticatedUser,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      const data = await client.query(
+        "DELETE FROM grades WHERE grade_id = $1",
+        [req.params.id]
+      );
+
+      res.status(200).json({ message: "data is deleted" });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
 export default router;

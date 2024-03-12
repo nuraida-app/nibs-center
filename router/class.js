@@ -47,12 +47,30 @@ router.get(
   async (req, res) => {
     try {
       const data = await client.query(
-        "SELECT * FROM class ORDER BY CAST(SUBSTRING(class.class, 1, LENGTH(class.class) - 1) AS INTEGER), SUBSTRING(class.class, LENGTH(class.class)) ASC"
+        "SELECT * FROM class ORDER BY CAST(SUBSTRING(class.class, 1, LENGTH(class.class) - 1) " +
+          "AS INTEGER), SUBSTRING(class.class, LENGTH(class.class)) ASC"
       );
 
       const classes = data.rows;
 
       res.status(200).json(classes);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+router.delete(
+  "/delete-class/:id",
+  authenticatedUser,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      const data = await client.query("DELETE FROM class WHERE class_id = $1", [
+        req.params.id,
+      ]);
+
+      res.status(200).json({ message: "data is deleted" });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
