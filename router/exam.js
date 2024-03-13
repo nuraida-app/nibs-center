@@ -13,8 +13,7 @@ router.post(
   authorizeRoles("admin", "teacher"),
   async (req, res) => {
     try {
-      const { exam_name, subject_id, teacher_id, time, pg, essay, grade_id } =
-        req.body;
+      const { exam_name, teacher_id, time, pg, essay, grade_id } = req.body;
 
       const checking = await client.query(
         "SELECT * FROM  exams WHERE exam_name = $1",
@@ -25,8 +24,8 @@ router.post(
         return res.status(500).json({ message: "Exam name is already used" });
       } else {
         const data = await client.query(
-          "INSERT INTO exams (exam_name, subject_id, teacher_id, time, pg, essay, grade_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-          [exam_name, subject_id, teacher_id, time, pg, essay, grade_id]
+          "INSERT INTO exams (exam_name, teacher_id, time, pg, essay, grade_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+          [exam_name, teacher_id, time, pg, essay, grade_id]
         );
 
         const exam = data.rows[0];
@@ -51,12 +50,12 @@ router.get(
   async (req, res) => {
     try {
       const data = await client.query(
-        "SELECT exams._id, exams.exam_name, exams.teacher_id, users.name, subject.subject, exams.time, exams.pg, exams.essay, exams.status, grades.grade, " +
+        "SELECT exams._id, exams.exam_name, exams.teacher_id, users.name, exams.time, " +
+          "exams.pg, exams.essay, exams.status, exams.grade_id, grades.grade, " +
           "(SELECT COUNT(*) FROM questions WHERE questions.exam_id = exams._id AND questions.quiz_type = 1) AS type_1, " +
           "(SELECT COUNT(*) FROM questions WHERE questions.exam_id = exams._id AND questions.quiz_type = 2) AS type_2 " +
           "FROM exams " +
           "INNER JOIN users ON exams.teacher_id = users._id " +
-          "INNER JOIN subject ON exams.subject_id = subject.subject_id " +
           "INNER JOIN grades ON exams.grade_id = grades.grade_id " +
           "ORDER BY exams.exam_name ASC"
       );
@@ -69,6 +68,7 @@ router.get(
         return res.status(404).json({ message: "Exams are not available" });
       }
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ error: error.message });
     }
   }
@@ -99,7 +99,7 @@ router.get(
   }
 );
 
-// GET EXAM DETAIL
+// GET EXAM DETAIL WITH QUESTIONS
 router.get(
   "/:id",
   authenticatedUser,
@@ -107,7 +107,10 @@ router.get(
   async (req, res) => {
     try {
       const data = await client.query(
-        "SELECT exams.exam_name, exams.time, exams.pg, exams.essay, questions._id, questions.exam_id, questions.quiz_type, questions.quiz, questions.img, questions.audio, questions.answer_1, questions.answer_2, questions.answer_3, questions.answer_4, questions.answer_5, questions.key FROM exams LEFT JOIN questions ON exams._id = questions.exam_id WHERE exams._id = $1",
+        "SELECT exams.exam_name, exams.time, exams.pg, exams.essay, " +
+          "questions._id, questions.exam_id, questions.quiz_type, questions.quiz, questions.img, questions.audio, " +
+          "questions.answer_1, questions.answer_2, questions.answer_3, questions.answer_4, questions.answer_5, questions.key " +
+          "FROM exams LEFT JOIN questions ON exams._id = questions.exam_id WHERE exams._id = $1",
         [req.params.id]
       );
 
@@ -135,6 +138,82 @@ router.get(
       res.status(200).json(exam);
     } catch (error) {
       return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// GET DETAIL EXAM
+router.get(
+  "/detail-exam/:id",
+  authenticatedUser,
+  authorizeRoles("admin", "teacher"),
+  async (req, res) => {
+    try {
+      const data = await client.query(
+        "SELECT exams._id FROM exams where _id = $1",
+        [req.params.id]
+      );
+
+      const exam = data.rows[0];
+
+      if (!exam) {
+        return res.status(404).json({ message: "Exam is not available" });
+      }
+
+      res.status(200).json(exam);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// UPDATE EXAM
+router.put(
+  `/update-exam/:id`,
+  authenticatedUser,
+  authorizeRoles("admin", "teacher"),
+  async (req, res) => {
+    try {
+      const { exam_name, teacher_id, time, pg, essay, grade_id } = req.body;
+
+      const process = await client.query(
+        "UPDATE exams SET exam_name = $1, teacher_id = $2, " +
+          "time = $3, pg = $4, essay = $5, grade_id = $6 WHERE _id = $7 RETURNING *",
+        [exam_name, teacher_id, time, pg, essay, grade_id, req.params.id]
+      );
+
+      if (process.rowCount > 0) {
+        res.status(200).json({ message: "Data has been updated" });
+      } else {
+        res.status(404).json({ message: "Data is not found" });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  }
+);
+
+// DELETE EXAM
+router.delete(
+  "/delete-exam/:id",
+  authenticatedUser,
+  authorizeRoles("admin", "teacher"),
+  async (req, res) => {
+    try {
+      const data = await client.query(
+        "DELETE FROM exams WHERE _id = $1 RETURNING *",
+        [req.params.id]
+      );
+
+      if (data.rows.length === 0) {
+        return res.status(404).json({ message: "Data is not found" });
+      }
+
+      res.status(200).json({ message: "Data has been deleted" });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: error.message });
     }
   }
 );

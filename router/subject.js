@@ -54,4 +54,23 @@ router.get(
   }
 );
 
+router.delete(
+  "/delete-subject/:id",
+  authenticatedUser,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      const data = await client.query(
+        "DELETE FROM subject WHERE subject_id = $1",
+        [req.params.id]
+      );
+
+      res.status(200).json({ message: "Data has been deleted" });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
 export default router;

@@ -64,7 +64,7 @@ router.delete(
         [req.params.id]
       );
 
-      res.status(200).json({ message: "data is deleted" });
+      res.status(200).json({ message: "data has been deleted" });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
