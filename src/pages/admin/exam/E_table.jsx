@@ -1,7 +1,9 @@
 import {
+  Backdrop,
   Box,
   Button,
   IconButton,
+  Modal,
   Paper,
   Table,
   TableBody,
@@ -15,15 +17,19 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
 import { red, yellow } from "@mui/material/colors";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Loader from "../../component/Loader/Loader";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteExam, getExam, getExams } from "../../../Redux/exam/E_action";
+import E_add from "./E_add";
+import { toast } from "react-toastify";
+import { DEL_EXAM_RESET } from "../../../Redux/exam/E_const";
 
 const columns = [
   { id: "no", label: "No", minWidth: 50 },
   { id: "name", label: "Exam Name", minWidth: 170 },
   { id: "teacher", label: "Teacher", minWidth: 170 },
-  { id: "subject", label: "Subject", minWidth: 170 },
   { id: "time", label: "Time", minWidth: 70 },
   { id: "pg", label: "MC", minWidth: 70 },
   { id: "essay", label: "Essay", minWidth: 70 },
@@ -33,7 +39,9 @@ const columns = [
 
 const E_table = ({ exams, load }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const [edit, setEdit] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -48,9 +56,35 @@ const E_table = ({ exams, load }) => {
 
   const toAddQues = (id, name) => navigate(`/center/admin/exam/${id}/${name}`);
 
+  const getDetail = (id) => {
+    dispatch(getExam(id));
+    setEdit(true);
+  };
+
+  // DELETE
+  const delExam = (id) => dispatch(deleteExam(id));
+
+  const { updelLoad, eIsDeleted, eDelMsg, eDelError } = useSelector(
+    (state) => state.e_updel
+  );
+
+  useEffect(() => {
+    if (eIsDeleted) {
+      toast.success(eDelMsg);
+
+      dispatch(getExams());
+
+      dispatch({ type: DEL_EXAM_RESET });
+    } else {
+      toast.error(eDelError);
+
+      dispatch({ type: DEL_EXAM_RESET });
+    }
+  }, [eIsDeleted, eDelMsg, eDelError]);
+
   return (
     <Fragment>
-      {load ? (
+      {load || updelLoad ? (
         <Box
           sx={{
             height: "100%",
@@ -91,7 +125,6 @@ const E_table = ({ exams, load }) => {
                     <TableCell align="center">{index + 1}</TableCell>
                     <TableCell align="center">{item.exam_name}</TableCell>
                     <TableCell align="center">{item.name}</TableCell>
-                    <TableCell align="center">{item.subject}</TableCell>
                     <TableCell align="center">{item.time} Minutes</TableCell>
                     <TableCell align="center">
                       {item.type_1 ? item.type_1 : 0}
@@ -117,12 +150,12 @@ const E_table = ({ exams, load }) => {
                         }}
                       >
                         <Tooltip title="Edit">
-                          <IconButton>
+                          <IconButton onClick={() => getDetail(item._id)}>
                             <EditIcon sx={{ color: yellow[800] }} />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Remove">
-                          <IconButton>
+                          <IconButton onClick={() => delExam(item._id)}>
                             <BookmarkRemoveIcon sx={{ color: red[500] }} />
                           </IconButton>
                         </Tooltip>
@@ -144,6 +177,18 @@ const E_table = ({ exams, load }) => {
           />
         </Paper>
       )}
+
+      <Modal
+        open={edit}
+        onClose={() => setEdit(false)}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{ backdrop: { timeout: 500 } }}
+      >
+        <div ref={useRef(null)}>
+          <E_add open={edit} close={() => setEdit(false)} />
+        </div>
+      </Modal>
     </Fragment>
   );
 };

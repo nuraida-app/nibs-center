@@ -10,6 +10,7 @@ import {
 } from "./Redux/user/T_reducer";
 import {
   addSubjectReducer,
+  delSubjectReducer,
   getSubjectReducer,
 } from "./Redux/subject/S_reducer";
 import {
@@ -34,6 +35,7 @@ import {
   addRoomReducer,
   getExamsReducer,
   getRoomsReducer,
+  updelExamReducer,
 } from "./Redux/exam/E_reducer";
 import {
   addQuizReducer,
@@ -66,9 +68,11 @@ const reducer = {
 
   subjects: getSubjectReducer,
   s_add: addSubjectReducer,
+  s_del: delSubjectReducer,
 
   exams: getExamsReducer,
   e_add: addExamReducer,
+  e_updel: updelExamReducer,
 
   Quizes: getQuizesReducer,
   q_add: addQuizReducer,

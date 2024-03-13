@@ -3,6 +3,10 @@ import {
   ADD_SUBJECT_REQ,
   ADD_SUBJECT_RESET,
   ADD_SUBJECT_SUCCESS,
+  DEL_SUBJECT_FAIL,
+  DEL_SUBJECT_REQ,
+  DEL_SUBJECT_RESET,
+  DEL_SUBJECT_SUCCESS,
   GET_SUBJECTS_FAIL,
   GET_SUBJECTS_REQ,
   GET_SUBJECTS_SUCCESS,
@@ -59,7 +63,48 @@ export const addSubjectReducer = (state = {}, action) => {
     case ADD_SUBJECT_RESET:
       return {
         ...state,
+        sIsAdded: false,
+        sAddSuccess: null,
         sAddError: null,
+      };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const delSubjectReducer = (state = {}, action) => {
+  switch (action.type) {
+    case DEL_SUBJECT_REQ:
+      return {
+        ...state,
+        sDelLoad: true,
+        sIsDeleted: false,
+      };
+
+    case DEL_SUBJECT_SUCCESS:
+      return {
+        ...state,
+        sDelLoad: false,
+        sIsDeleted: true,
+        sDelSuccess: action.payload,
+      };
+
+    case DEL_SUBJECT_FAIL:
+      return {
+        ...state,
+        sDelLoad: false,
+        sIsDeleted: false,
+        sDelError: action.payload,
+      };
+
+    case DEL_SUBJECT_RESET:
+      return {
+        ...state,
+        sDelLoad: false,
+        sIsDeleted: false,
+        sDelSuccess: null,
+        sDelError: null,
       };
 
     default:

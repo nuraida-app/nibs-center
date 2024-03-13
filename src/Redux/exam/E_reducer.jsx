@@ -7,8 +7,13 @@ import {
   ADD__ROOM_REQ,
   ADD__ROOM_RESET,
   ADD__ROOM_SUCCESS,
+  DEL_EXAM_FAIL,
+  DEL_EXAM_REQ,
+  DEL_EXAM_RESET,
+  DEL_EXAM_SUCCESS,
   DETAIL_EXAM_FAIL,
   DETAIL_EXAM_REQ,
+  DETAIL_EXAM_RESET,
   DETAIL_EXAM_SUCCESS,
   GET_EXAM_FAIL,
   GET_EXAM_REQ,
@@ -16,6 +21,10 @@ import {
   GET_ROOM_FAIL,
   GET_ROOM_REQ,
   GET_ROOM_SUCCESS,
+  UP_EXAM_FAIL,
+  UP_EXAM_REQ,
+  UP_EXAM_RESET,
+  UP_EXAM_SUCCESS,
 } from "./E_const";
 
 export const getExamsReducer = (state = [], action) => {
@@ -41,6 +50,7 @@ export const getExamsReducer = (state = [], action) => {
         ...state,
         eLoad: false,
         detail_Load: false,
+        detail: action.exam,
         exam_detail: action.payload,
       };
     }
@@ -53,6 +63,12 @@ export const getExamsReducer = (state = [], action) => {
         detail_Load: false,
         eError: action.payload,
         detail_error: action.payload,
+      };
+
+    case DETAIL_EXAM_RESET:
+      return {
+        ...state,
+        detail: null,
       };
 
     default:
@@ -91,6 +107,64 @@ export const addExamReducer = (state = {}, action) => {
         eAddLoad: false,
         eIsAdded: false,
         eErrorMsg: null,
+      };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const updelExamReducer = (state = {}, action) => {
+  switch (action.type) {
+    case UP_EXAM_REQ:
+    case DEL_EXAM_REQ:
+      return {
+        ...state,
+        updelLoad: true,
+      };
+
+    case UP_EXAM_SUCCESS:
+      return {
+        ...state,
+        updelLoad: false,
+        eIsUpdated: true,
+        eUpMsg: action.payload,
+      };
+
+    case DEL_EXAM_SUCCESS:
+      return {
+        ...state,
+        updelLoad: false,
+        eIsDeleted: true,
+        eDelMsg: action.payload,
+      };
+
+    case UP_EXAM_FAIL:
+      return {
+        ...state,
+        updelLoad: false,
+        eIsUpdated: false,
+        eUpError: action.payload,
+      };
+
+    case DEL_EXAM_FAIL:
+      return {
+        ...state,
+        updelLoad: false,
+        eIsDeleted: false,
+        eDelError: action.payload,
+      };
+
+    case UP_EXAM_RESET:
+    case DEL_EXAM_RESET:
+      return {
+        ...state,
+        eUpMsg: null,
+        eUpError: null,
+        eDelMsg: null,
+        eDelError: null,
+        eIsUpdated: null,
+        eIsDeleted: null,
       };
 
     default:

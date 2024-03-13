@@ -5,16 +5,17 @@ export const GET_EXAM_FAIL = "GET_EXAM_FAIL";
 export const DETAIL_EXAM_REQ = "DETAIL_EXAM_REQ";
 export const DETAIL_EXAM_SUCCESS = "DETAIL_EXAM_SUCCESS";
 export const DETAIL_EXAM_FAIL = "DETAIL_EXAM_FAIL";
+export const DETAIL_EXAM_RESET = "DETAIL_EXAM_RESET";
 
 export const ADD_EXAM_REQ = "ADD_EXAM_REQ";
 export const ADD_EXAM_SUCCESS = "ADD_EXAM_SUCCESS";
 export const ADD_EXAM_FAIL = "ADD_EXAM_FAIL";
 export const ADD_EXAM_RESET = "ADD_EXAM_RESET";
 
-export const EDIT_EXAM_REQ = "EDIT_EXAM_REQ";
-export const EDIT_EXAM_SUCCESS = "EDIT_EXAM_SUCCESS";
-export const EDIT_EXAM_FAIL = "EDIT_EXAM_FAIL";
-export const EDIT_EXAM_RESET = "EDIT_EXAM_RESET";
+export const UP_EXAM_REQ = "UP_EXAM_REQ";
+export const UP_EXAM_SUCCESS = "UP_EXAM_SUCCESS";
+export const UP_EXAM_FAIL = "UP_EXAM_FAIL";
+export const UP_EXAM_RESET = "UP_EXAM_RESET";
 
 export const DEL_EXAM_REQ = "DEL_EXAM_REQ";
 export const DEL_EXAM_SUCCESS = "DEL_EXAM_SUCCESS";

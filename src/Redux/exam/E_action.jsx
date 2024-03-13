@@ -6,6 +6,9 @@ import {
   ADD__ROOM_FAIL,
   ADD__ROOM_REQ,
   ADD__ROOM_SUCCESS,
+  DEL_EXAM_FAIL,
+  DEL_EXAM_REQ,
+  DEL_EXAM_SUCCESS,
   DETAIL_EXAM_FAIL,
   DETAIL_EXAM_REQ,
   DETAIL_EXAM_SUCCESS,
@@ -15,6 +18,9 @@ import {
   GET_ROOM_FAIL,
   GET_ROOM_REQ,
   GET_ROOM_SUCCESS,
+  UP_EXAM_FAIL,
+  UP_EXAM_REQ,
+  UP_EXAM_SUCCESS,
 } from "./E_const";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE;
@@ -39,7 +45,7 @@ export const getExams = () => async (dispatch) => {
   }
 };
 
-// DETAIL EXAM
+// DETAIL EXAM WITH QUESTIONS
 export const getDetailExam = (id) => async (dispatch) => {
   try {
     dispatch({ type: DETAIL_EXAM_REQ });
@@ -49,6 +55,26 @@ export const getDetailExam = (id) => async (dispatch) => {
     dispatch({ type: DETAIL_EXAM_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: DETAIL_EXAM_FAIL, payload: error.message });
+  }
+};
+
+// DETAIL EXAM
+export const getExam = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: DETAIL_EXAM_REQ });
+
+    const { data } = await axios.get(`/api/exams/detail-exam/${id}`, config);
+
+    dispatch({ type: DETAIL_EXAM_SUCCESS, exam: data });
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: DETAIL_EXAM_FAIL,
+      payload:
+        error.response.data.message ||
+        error.message ||
+        error.response.data.error,
+    });
   }
 };
 
@@ -63,6 +89,43 @@ export const addExam = (eData) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: ADD_EXAM_FAIL,
+      payload: error.message || error.response.data.message,
+    });
+  }
+};
+
+// UPDATE EXAM
+export const updateExam = (id, eData) => async (dispatch) => {
+  try {
+    dispatch({ type: UP_EXAM_REQ });
+
+    const { data } = await axios.put(
+      `/api/exams/update-exam/${id}`,
+      eData,
+      config
+    );
+
+    dispatch({ type: UP_EXAM_SUCCESS, payload: data.message });
+  } catch (error) {
+    dispatch({
+      type: UP_EXAM_FAIL,
+      payload: error.message || error.response.data.message,
+    });
+  }
+};
+
+// DELETE EXAM
+export const deleteExam = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: DEL_EXAM_REQ });
+
+    const { data } = await axios.delete(`/api/exams/delete-exam/${id}`, config);
+
+    dispatch({ type: DEL_EXAM_SUCCESS, payload: data.message });
+  } catch (error) {
+    console.log(error);
+    dispatch({
+      type: DEL_EXAM_FAIL,
       payload: error.message || error.response.data.message,
     });
   }

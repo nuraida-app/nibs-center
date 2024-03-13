@@ -14,8 +14,12 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { red, yellow } from "@mui/material/colors";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Loader from "../../component/Loader/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteSubject, getSubjects } from "../../../Redux/subject/S_action";
+import { toast } from "react-toastify";
+import { DEL_SUBJECT_RESET } from "../../../Redux/subject/S-Const";
 
 const colums = [
   { id: "id", label: "ID", minWidth: 90 },
@@ -36,9 +40,32 @@ const S_Table = ({ subjects, load }) => {
     setPage(0);
   };
 
+  // DELETE
+  const dispatch = useDispatch();
+
+  const { sDelLoad, sIsDeleted, sDelSuccess, sDelError } = useSelector(
+    (state) => state.s_del
+  );
+
+  const delSubject = (id) => dispatch(deleteSubject(id));
+
+  useEffect(() => {
+    if (sIsDeleted) {
+      toast.success(sDelSuccess);
+
+      dispatch(getSubjects());
+
+      dispatch({ type: DEL_SUBJECT_RESET });
+    } else {
+      toast.error(sDelError);
+
+      dispatch({ type: DEL_SUBJECT_RESET });
+    }
+  }, [sIsDeleted, sDelSuccess, sDelError]);
+
   return (
     <Fragment>
-      {load ? (
+      {load || sDelLoad ? (
         <Box
           sx={{
             height: "100%",
@@ -91,13 +118,10 @@ const S_Table = ({ subjects, load }) => {
                           justifyContent: "space-around",
                         }}
                       >
-                        <Tooltip title="Edit">
-                          <IconButton>
-                            <EditIcon sx={{ color: yellow[800] }} />
-                          </IconButton>
-                        </Tooltip>
                         <Tooltip title="Delete">
-                          <IconButton>
+                          <IconButton
+                            onClick={() => delSubject(item.subject_id)}
+                          >
                             <RemoveCircleIcon sx={{ color: red[500] }} />
                           </IconButton>
                         </Tooltip>

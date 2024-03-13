@@ -11,11 +11,16 @@ import {
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../component/Loader/Loader";
-import { addExam, getExams } from "../../../Redux/exam/E_action";
+import { addExam, getExams, updateExam } from "../../../Redux/exam/E_action";
 import { toast } from "react-toastify";
-import { ADD_EXAM_RESET } from "../../../Redux/exam/E_const";
+import {
+  ADD_EXAM_RESET,
+  DETAIL_EXAM_RESET,
+  UP_EXAM_RESET,
+} from "../../../Redux/exam/E_const";
 
 const E_add = ({ open, close }) => {
+  // GLOBAL STATE
   const dispatch = useDispatch(open);
 
   const { teachers, tLoad } = useSelector((state) => state.teachers);
@@ -29,38 +34,18 @@ const E_add = ({ open, close }) => {
 
   const [teacherId, setTeacherId] = useState("");
   const [title, setTitle] = useState("");
-  const [subject, setSubject] = useState("");
-  const [subjectId, setSubjectId] = useState("");
   const [time, setTime] = useState("");
   const [mcPoints, setMcPoints] = useState("");
   const [ePoints, setEPoints] = useState("");
   const [gradeId, setGradeId] = useState("");
 
+  // CREATE
+
   useEffect(() => {
     if (teacher) {
       setTeacherId(teacher._id);
-      setSubject(teacher.subject);
-      setSubjectId(teacher.subject_id);
     }
   }, [teacher]);
-
-  const createExam = (e) => {
-    e.preventDefault();
-
-    const data = {
-      exam_name: title,
-      subject_id: subjectId,
-      teacher_id: teacherId,
-      time: time,
-      pg: mcPoints,
-      essay: ePoints,
-      grade_id: gradeId,
-    };
-
-    dispatch(addExam(data));
-
-    console.log(data);
-  };
 
   useEffect(() => {
     if (eIsAdded) {
@@ -69,8 +54,6 @@ const E_add = ({ open, close }) => {
       setTeacher("");
       setTeacherId("");
       setTitle("");
-      setSubject("");
-      setSubjectId("");
       setTime("");
       setMcPoints("");
       setEPoints("");
@@ -87,6 +70,79 @@ const E_add = ({ open, close }) => {
       dispatch({ type: ADD_EXAM_RESET });
     }
   }, [eIsAdded, eErrorMsg, eSuccessMsg]);
+
+  // UPDATE
+  const { detail, detail_Load, exams } = useSelector((state) => state.exams);
+  const { updelLoad, eIsUpdated, eUpMsg, eUpError } = useSelector(
+    (state) => state.e_updel
+  );
+
+  const [detailExam, setDetailExam] = useState(null);
+  const [examId, setExamId] = useState("");
+
+  useEffect(() => {
+    const filtered = exams?.filter((item) => item._id === detail?._id);
+
+    if (filtered.length > 0) {
+      setDetailExam(filtered[0]);
+    }
+  }, [detail, exams]);
+
+  useEffect(() => {
+    if (detailExam) {
+      const { _id, teacher_id, exam_name, time, pg, essay, grade_id } =
+        detailExam;
+      setExamId(_id);
+      setTeacherId(teacher_id);
+      setTitle(exam_name);
+      setTime(time);
+      setMcPoints(pg);
+      setEPoints(essay);
+      setGradeId(grade_id);
+    }
+  }, [detailExam]);
+
+  useEffect(() => {
+    if (eIsUpdated) {
+      toast.success(eUpMsg);
+
+      dispatch(getExams());
+
+      dispatch({ type: UP_EXAM_RESET });
+
+      close();
+    } else {
+      toast.error(eUpError);
+
+      dispatch({ type: UP_EXAM_RESET });
+    }
+  }, [eIsUpdated, eUpMsg, eUpError]);
+
+  // FUNCTION
+  const createExam = (e) => {
+    e.preventDefault();
+
+    const data = {
+      exam_name: title,
+      teacher_id: teacherId,
+      time: time,
+      pg: mcPoints,
+      essay: ePoints,
+      grade_id: gradeId,
+    };
+
+    if (examId) {
+      dispatch(updateExam(examId, data));
+    } else {
+      dispatch(addExam(data));
+    }
+  };
+
+  const closeHandler = () => {
+    close();
+
+    dispatch({ type: DETAIL_EXAM_RESET });
+  };
 
   return (
     <div>
@@ -107,7 +163,7 @@ const E_add = ({ open, close }) => {
             borderRadius: "5px",
           }}
         >
-          {tLoad || gload || eLoad ? (
+          {tLoad || gload || eLoad || detail_Load || updelLoad ? (
             <Loader />
           ) : (
             <form
@@ -139,7 +195,7 @@ const E_add = ({ open, close }) => {
                 <InputLabel>Select Grade</InputLabel>
                 <Select
                   label="Select Grade"
-                  value={gradeId}
+                  value={gradeId || ""}
                   onChange={(e) => setGradeId(e.target.value)}
                   required
                 >
@@ -152,15 +208,8 @@ const E_add = ({ open, close }) => {
               </FormControl>
 
               <TextField
-                required
-                placeholder="Subject"
-                value={subject}
-                aria-readonly
-              />
-
-              <TextField
                 placeholder="Title"
-                value={title}
+                value={title || ""}
                 onChange={(e) => setTitle(e.target.value)}
                 required
               />
@@ -168,7 +217,7 @@ const E_add = ({ open, close }) => {
               <TextField
                 type="number"
                 placeholder="Multiple Choice"
-                value={mcPoints}
+                value={mcPoints || ""}
                 onChange={(e) => setMcPoints(e.target.value)}
                 required
               />
@@ -176,7 +225,7 @@ const E_add = ({ open, close }) => {
               <TextField
                 type="number"
                 placeholder="Essay"
-                value={ePoints}
+                value={ePoints || ""}
                 onChange={(e) => setEPoints(e.target.value)}
                 required
               />
@@ -184,7 +233,7 @@ const E_add = ({ open, close }) => {
               <TextField
                 type="number"
                 placeholder="Duration"
-                value={time}
+                value={time || ""}
                 onChange={(e) => setTime(e.target.value)}
                 required
               />
@@ -197,11 +246,15 @@ const E_add = ({ open, close }) => {
                   gap: "10px",
                 }}
               >
-                <Button variant="contained" color="error" onClick={close}>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={closeHandler}
+                >
                   cancel
                 </Button>
                 <Button variant="contained" color="success" type="submit">
-                  add
+                  {examId ? "update" : "add"}
                 </Button>
               </Box>
             </form>
