@@ -206,11 +206,18 @@ router.delete(
         [req.params.id]
       );
 
+      const delQuestion = await client.query(
+        "DELETE FROM questions WHERE exam_id = $1 RETURNING *",
+        [req.params.id]
+      );
+
       if (data.rows.length === 0) {
         return res.status(404).json({ message: "Data is not found" });
       }
 
-      res.status(200).json({ message: "Data has been deleted" });
+      res.status(200).json({
+        message: `Exam and ${delQuestion.rows.length} questions  have been deleted`,
+      });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: error.message });
