@@ -36,6 +36,7 @@ import {
   getExamsReducer,
   getRoomsReducer,
   updelExamReducer,
+  updelRoomReducer,
 } from "./Redux/exam/E_reducer";
 import {
   addQuizReducer,
@@ -80,6 +81,7 @@ const reducer = {
 
   rooms: getRoomsReducer,
   r_add: addRoomReducer,
+  r_updel: updelRoomReducer,
 };
 
 const initialState = {};

@@ -2,6 +2,7 @@ import {
   Backdrop,
   Box,
   Button,
+  Fade,
   IconButton,
   Modal,
   Paper,
@@ -13,6 +14,7 @@ import {
   TablePagination,
   TableRow,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
@@ -64,6 +66,14 @@ const E_table = ({ exams, load }) => {
   // DELETE
   const delExam = (id) => dispatch(deleteExam(id));
 
+  const [delOpen, setDelopen] = useState(false);
+  const [exam_id, setId] = useState("");
+
+  const confirmDelete = (id) => {
+    setDelopen(true);
+    setId(id);
+  };
+
   const { updelLoad, eIsDeleted, eDelMsg, eDelError } = useSelector(
     (state) => state.e_updel
   );
@@ -75,6 +85,8 @@ const E_table = ({ exams, load }) => {
       dispatch(getExams());
 
       dispatch({ type: DEL_EXAM_RESET });
+
+      setDelopen(false);
     } else {
       toast.error(eDelError);
 
@@ -155,7 +167,7 @@ const E_table = ({ exams, load }) => {
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Remove">
-                          <IconButton onClick={() => delExam(item._id)}>
+                          <IconButton onClick={() => confirmDelete(item._id)}>
                             <BookmarkRemoveIcon sx={{ color: red[500] }} />
                           </IconButton>
                         </Tooltip>
@@ -188,6 +200,79 @@ const E_table = ({ exams, load }) => {
         <div ref={useRef(null)}>
           <E_add open={edit} close={() => setEdit(false)} />
         </div>
+      </Modal>
+
+      <Modal
+        open={delOpen}
+        onClose={() => setDelopen(false)}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{ backdrop: { timeout: 500 } }}
+      >
+        <Fade in={delOpen}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 400,
+              bgcolor: "#ffff",
+              boxShadow: 24,
+              p: 2,
+              borderRadius: "5px",
+            }}
+          >
+            {updelLoad ? (
+              <Box
+                sx={{
+                  height: "100%",
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Loader />
+              </Box>
+            ) : (
+              <Box>
+                <Typography align="center">
+                  By deleting this exam, it will delete all questions, students'
+                  answer and score
+                </Typography>
+                <Typography align="center">
+                  Besure to download answer and score sheet before continuing
+                  this process
+                </Typography>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "end",
+                    gap: "10px",
+                    mt: 2,
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    onClick={() => setDelopen(false)}
+                  >
+                    cancel
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => delExam(exam_id)}
+                  >
+                    delete
+                  </Button>
+                </Box>
+              </Box>
+            )}
+          </Box>
+        </Fade>
       </Modal>
     </Fragment>
   );

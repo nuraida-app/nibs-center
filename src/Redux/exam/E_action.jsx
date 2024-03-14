@@ -9,6 +9,9 @@ import {
   DEL_EXAM_FAIL,
   DEL_EXAM_REQ,
   DEL_EXAM_SUCCESS,
+  DEL_ROOM_FAIL,
+  DEL_ROOM_REQ,
+  DEL_ROOM_SUCCESS,
   DETAIL_EXAM_FAIL,
   DETAIL_EXAM_REQ,
   DETAIL_EXAM_SUCCESS,
@@ -21,6 +24,9 @@ import {
   UP_EXAM_FAIL,
   UP_EXAM_REQ,
   UP_EXAM_SUCCESS,
+  UP_ROOM_FAIL,
+  UP_ROOM_REQ,
+  UP_ROOM_SUCCESS,
 } from "./E_const";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE;
@@ -140,7 +146,6 @@ export const getRooms = () => async (dispatch) => {
 
     dispatch({ type: GET_ROOM_SUCCESS, payload: data });
   } catch (error) {
-    console.log(error.response.data);
     dispatch({
       type: GET_ROOM_FAIL,
       payload: error.message || error.response.data.message,
@@ -159,6 +164,58 @@ export const addRoom = (rData) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: ADD__ROOM_FAIL,
+      payload: error.message || error.response.data.message,
+    });
+  }
+};
+
+// DETAIL ROOM
+export const detailRoom = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: DEL_ROOM_REQ });
+
+    const { data } = await axios.get(`/api/rooms/${id}`, config);
+
+    dispatch({ type: DEL_ROOM_SUCCESS, payload: data.message });
+  } catch (error) {
+    dispatch({
+      type: DEL_ROOM_FAIL,
+      payload: error.message || error.response.data.message,
+    });
+  }
+};
+
+// UPDATE ROOM
+export const updateRoom = (id, rData) => async (dispatch) => {
+  try {
+    dispatch({ type: UP_ROOM_REQ });
+
+    const { data } = await axios.put(
+      `/api/rooms/update-room/${id}`,
+      rData,
+      config
+    );
+
+    dispatch({ type: UP_ROOM_SUCCESS, payload: data.message });
+  } catch (error) {
+    dispatch({
+      tyoe: UP_ROOM_FAIL,
+      payload: error.message || error.response.data.message,
+    });
+  }
+};
+
+// DELETE
+export const deleteRoom = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: DEL_ROOM_REQ });
+
+    const { data } = await axios.delete(`/api/rooms/delete-room/${id}`, config);
+
+    dispatch({ type: DEL_ROOM_SUCCESS, payload: data.message });
+  } catch (error) {
+    dispatch({
+      type: DEL_ROOM_FAIL,
       payload: error.message || error.response.data.message,
     });
   }

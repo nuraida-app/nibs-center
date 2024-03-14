@@ -31,3 +31,13 @@ export const GET_ROOM_REQ = "GET_ROOM_REQ";
 export const GET_ROOM_SUCCESS = "GET_ROOM_SUCCESS";
 export const GET_ROOM_FAIL = "GET_ROOM_FAIL";
 export const GET_ROOM_RESET = "GET_ROOM_RESET";
+
+export const UP_ROOM_REQ = "UP_ROOM_REQ";
+export const UP_ROOM_SUCCESS = "UP_ROOM_SUCCESS";
+export const UP_ROOM_FAIL = "UP_ROOM_FAIL";
+export const UP_ROOM_RESET = "UP_ROOM_RESET";
+
+export const DEL_ROOM_REQ = "DEL_ROOM_REQ";
+export const DEL_ROOM_SUCCESS = "DEL_ROOM_SUCCESS";
+export const DEL_ROOM_FAIL = "DEL_ROOM_FAIL";
+export const DEL_ROOM_RESET = "DEL_ROOM_RESET";

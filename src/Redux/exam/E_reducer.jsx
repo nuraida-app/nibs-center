@@ -11,6 +11,9 @@ import {
   DEL_EXAM_REQ,
   DEL_EXAM_RESET,
   DEL_EXAM_SUCCESS,
+  DEL_ROOM_FAIL,
+  DEL_ROOM_REQ,
+  DEL_ROOM_SUCCESS,
   DETAIL_EXAM_FAIL,
   DETAIL_EXAM_REQ,
   DETAIL_EXAM_RESET,
@@ -25,6 +28,9 @@ import {
   UP_EXAM_REQ,
   UP_EXAM_RESET,
   UP_EXAM_SUCCESS,
+  UP_ROOM_FAIL,
+  UP_ROOM_REQ,
+  UP_ROOM_SUCCESS,
 } from "./E_const";
 
 export const getExamsReducer = (state = [], action) => {
@@ -172,6 +178,7 @@ export const updelExamReducer = (state = {}, action) => {
   }
 };
 
+// CLASSROOM
 export const getRoomsReducer = (state = [], action) => {
   switch (action.type) {
     case GET_ROOM_REQ:
@@ -231,6 +238,51 @@ export const addRoomReducer = (state = {}, action) => {
         rIsAdded: false,
         rSuccessMsg: null,
         rErrorMsg: null,
+      };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const updelRoomReducer = (state = {}, action) => {
+  switch (action.type) {
+    case UP_ROOM_REQ:
+    case DEL_ROOM_REQ:
+      return { ...state, rUpdelLoad: true };
+
+    case UP_ROOM_SUCCESS:
+      return {
+        ...state,
+        rUpdelLoad: false,
+        rIsUpdated: true,
+        rUpMsg: action.payload,
+      };
+
+    case DEL_ROOM_SUCCESS:
+      return {
+        ...state,
+        rUpdelLoad: false,
+        rIsDeleted: true,
+        rDelMsg: action.payload,
+      };
+
+    case UP_ROOM_FAIL:
+      return {
+        ...state,
+        rUpdelLoad: false,
+        rIsUpdated: false,
+        eUpError: action.paylaod,
+      };
+
+    case DEL_ROOM_FAIL:
+      return {
+        ...state,
+        rUpdelLoad: false,
+        rIsUpdated: false,
+        rIsDeleted: false,
+        rUpMsg: null,
+        rDelMsg: null,
       };
 
     default:
