@@ -17,7 +17,7 @@ router.get(
       const admin = req.user.role === "admin"; // Menentukan apakah pengguna adalah admin
       if (admin) {
         const data = await client.query(
-          "SELECT exam_rooms.id, exam_rooms.name AS room_name, exam_rooms.description, exam_rooms.code, grades.grade, " +
+          "SELECT exam_rooms.id, exam_rooms.name AS room_name, exam_rooms.exam_id, exam_rooms.description, exam_rooms.code, grades.grade, " +
             "users.name AS teacher_name, exams.exam_name, exam_rooms.status, exam_rooms.date_start, exam_rooms.time_start " +
             "FROM exam_rooms " +
             "INNER JOIN users ON exam_rooms.teacher_id = users._id " +
