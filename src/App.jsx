@@ -26,6 +26,7 @@ import Admin_Exam_Page from "./pages/admin/exam/Admin_Exam_Page";
 import Q_list from "./pages/admin/exam/question/Q_list";
 import Playground from "./Playground";
 import Rooms from "./pages/admin/exam/rooms/Rooms";
+import Detail from "./pages/admin/exam/detail/Detail";
 
 function App() {
   const dispatch = useDispatch();
@@ -75,6 +76,11 @@ function App() {
         <Route path="/center/admin-exam-page" element={<Admin_Exam_Page />} />
 
         <Route path="/center/admin-schedule-page" element={<Rooms />} />
+
+        <Route
+          path="/center/admin/classroom/:name/:roomId/exam/:id"
+          element={<Detail />}
+        />
 
         {/* TEACHER ROUTES */}
 

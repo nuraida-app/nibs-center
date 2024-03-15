@@ -31,6 +31,7 @@ import {
 import { toast } from "react-toastify";
 import { DEL_ROOM_RESET } from "../../../../Redux/exam/E_const";
 import R_Update from "./R_Update";
+import { Link, useNavigate } from "react-router-dom";
 
 const columns = [
   { id: "no", label: "No", minWidth: 30 },
@@ -99,6 +100,13 @@ const R_table = ({ rooms, load }) => {
       dispatch({ type: DEL_ROOM_RESET });
     }
   }, [rIsDeleted, rDelMsg, rDelError]);
+
+  // NAVIGATE
+  const navigate = useNavigate();
+
+  const redirect = (id, name) => {
+    navigate(`/center/admin/classroom/${name}/exam/${id}`);
+  };
 
   return (
     <Fragment>
@@ -195,7 +203,10 @@ const R_table = ({ rooms, load }) => {
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Detail">
-                          <IconButton>
+                          <IconButton
+                            component={Link}
+                            to={`/center/admin/classroom/${item.room_name}/${item.id}/exam/${item.exam_id}`}
+                          >
                             <ArrowCircleRightIcon sx={{ color: blue[500] }} />
                           </IconButton>
                         </Tooltip>
