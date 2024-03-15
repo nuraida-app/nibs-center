@@ -1,3 +1,4 @@
+// EXAM
 export const GET_EXAM_REQ = "GET_EXAM_REQ";
 export const GET_EXAM_SUCCESS = "GET_EXAM_SUCCESS";
 export const GET_EXAM_FAIL = "GET_EXAM_FAIL";
@@ -22,6 +23,7 @@ export const DEL_EXAM_SUCCESS = "DEL_EXAM_SUCCESS";
 export const DEL_EXAM_FAIL = "DEL_EXAM_FAIL";
 export const DEL_EXAM_RESET = "DEL_EXAM_RESET";
 
+// ROOM
 export const ADD__ROOM_REQ = "ADD__ROOM_REQ";
 export const ADD__ROOM_SUCCESS = "ADD__ROOM_SUCCESS";
 export const ADD__ROOM_FAIL = "ADD__ROOM_FAIL";
@@ -31,6 +33,11 @@ export const GET_ROOM_REQ = "GET_ROOM_REQ";
 export const GET_ROOM_SUCCESS = "GET_ROOM_SUCCESS";
 export const GET_ROOM_FAIL = "GET_ROOM_FAIL";
 export const GET_ROOM_RESET = "GET_ROOM_RESET";
+
+export const DETAIL_ROOM_REQ = "DETAIL_ROOM_REQ";
+export const DETAIL_ROOM_SUCCESS = "DETAIL_ROOM_SUCCESS";
+export const DETAIL_ROOM_FAIL = "DETAIL_ROOM_FAIL";
+export const DETAIL_ROOM_RESET = "DETAIL_ROOM_RESET";
 
 export const UP_ROOM_REQ = "UP_ROOM_REQ";
 export const UP_ROOM_SUCCESS = "UP_ROOM_SUCCESS";

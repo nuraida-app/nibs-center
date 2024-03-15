@@ -13,11 +13,14 @@ import {
   DEL_EXAM_SUCCESS,
   DEL_ROOM_FAIL,
   DEL_ROOM_REQ,
+  DEL_ROOM_RESET,
   DEL_ROOM_SUCCESS,
   DETAIL_EXAM_FAIL,
   DETAIL_EXAM_REQ,
   DETAIL_EXAM_RESET,
   DETAIL_EXAM_SUCCESS,
+  DETAIL_ROOM_REQ,
+  DETAIL_ROOM_SUCCESS,
   GET_EXAM_FAIL,
   GET_EXAM_REQ,
   GET_EXAM_SUCCESS,
@@ -30,6 +33,7 @@ import {
   UP_EXAM_SUCCESS,
   UP_ROOM_FAIL,
   UP_ROOM_REQ,
+  UP_ROOM_RESET,
   UP_ROOM_SUCCESS,
 } from "./E_const";
 
@@ -182,23 +186,36 @@ export const updelExamReducer = (state = {}, action) => {
 export const getRoomsReducer = (state = [], action) => {
   switch (action.type) {
     case GET_ROOM_REQ:
+    case DETAIL_ROOM_REQ:
       return {
         ...state,
         rLoad: true,
+        rDetailLoad: true,
       };
 
     case GET_ROOM_SUCCESS:
       return {
         ...state,
         rLoad: false,
+        rDetailLoad: false,
         rooms: action.payload,
+      };
+
+    case DETAIL_ROOM_SUCCESS:
+      return {
+        ...state,
+        rLoad: false,
+        rDetailLoad: false,
+        room: action.room,
       };
 
     case GET_ROOM_FAIL:
       return {
         ...state,
         rLoad: false,
+        rDetailLoad: false,
         rError: action.payload,
+        detailRoomError: action.error,
       };
 
     default:
@@ -272,10 +289,19 @@ export const updelRoomReducer = (state = {}, action) => {
         ...state,
         rUpdelLoad: false,
         rIsUpdated: false,
-        eUpError: action.paylaod,
+        rUpError: action.paylaod,
       };
 
     case DEL_ROOM_FAIL:
+      return {
+        ...state,
+        rUpdelLoad: false,
+        rIsDeleted: false,
+        rDelError: action.payload,
+      };
+
+    case DEL_ROOM_RESET:
+    case UP_ROOM_RESET:
       return {
         ...state,
         rUpdelLoad: false,

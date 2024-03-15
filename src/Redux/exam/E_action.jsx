@@ -15,6 +15,9 @@ import {
   DETAIL_EXAM_FAIL,
   DETAIL_EXAM_REQ,
   DETAIL_EXAM_SUCCESS,
+  DETAIL_ROOM_FAIL,
+  DETAIL_ROOM_REQ,
+  DETAIL_ROOM_SUCCESS,
   GET_EXAM_FAIL,
   GET_EXAM_REQ,
   GET_EXAM_SUCCESS,
@@ -172,15 +175,15 @@ export const addRoom = (rData) => async (dispatch) => {
 // DETAIL ROOM
 export const detailRoom = (id) => async (dispatch) => {
   try {
-    dispatch({ type: DEL_ROOM_REQ });
+    dispatch({ type: DETAIL_ROOM_REQ });
 
     const { data } = await axios.get(`/api/rooms/${id}`, config);
 
-    dispatch({ type: DEL_ROOM_SUCCESS, payload: data.message });
+    dispatch({ type: DETAIL_ROOM_SUCCESS, room: data });
   } catch (error) {
     dispatch({
-      type: DEL_ROOM_FAIL,
-      payload: error.message || error.response.data.message,
+      type: DETAIL_ROOM_FAIL,
+      error: error.message || error.response.data.message,
     });
   }
 };
@@ -198,8 +201,9 @@ export const updateRoom = (id, rData) => async (dispatch) => {
 
     dispatch({ type: UP_ROOM_SUCCESS, payload: data.message });
   } catch (error) {
+    console.log(error);
     dispatch({
-      tyoe: UP_ROOM_FAIL,
+      type: UP_ROOM_FAIL,
       payload: error.message || error.response.data.message,
     });
   }
@@ -214,6 +218,7 @@ export const deleteRoom = (id) => async (dispatch) => {
 
     dispatch({ type: DEL_ROOM_SUCCESS, payload: data.message });
   } catch (error) {
+    console.log(error);
     dispatch({
       type: DEL_ROOM_FAIL,
       payload: error.message || error.response.data.message,

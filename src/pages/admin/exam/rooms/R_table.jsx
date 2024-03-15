@@ -17,12 +17,20 @@ import {
   Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
+import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemove";
+import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import { blue, red, yellow } from "@mui/material/colors";
 import Loader from "../../../component/Loader/Loader";
-import { Fragment, useState } from "react";
-import { useDispatch } from "react-redux";
-import { deleteRoom } from "../../../../Redux/exam/E_action";
+import { Fragment, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteRoom,
+  detailRoom,
+  getRooms,
+} from "../../../../Redux/exam/E_action";
+import { toast } from "react-toastify";
+import { DEL_ROOM_RESET } from "../../../../Redux/exam/E_const";
+import R_Update from "./R_Update";
 
 const columns = [
   { id: "no", label: "No", minWidth: 30 },
@@ -52,7 +60,20 @@ const R_table = ({ rooms, load }) => {
     setPage(0);
   };
 
+  // UPPDATE
+  const [update, setUpdate] = useState(false);
+
+  const upHandler = (id) => {
+    setUpdate(true);
+
+    dispatch(detailRoom(id));
+  };
+
   // DELETE
+  const { rUpdelLoad, rIsDeleted, rDelMsg, rDelError } = useSelector(
+    (state) => state.r_updel
+  );
+
   const [del, setDel] = useState(false);
   const [rId, setR] = useState("");
 
@@ -62,6 +83,22 @@ const R_table = ({ rooms, load }) => {
   };
 
   const delRoom = (id) => dispatch(deleteRoom(id));
+
+  useEffect(() => {
+    if (rIsDeleted) {
+      toast.success(rDelMsg);
+
+      dispatch({ type: DEL_ROOM_RESET });
+
+      dispatch(getRooms());
+
+      setDel(false);
+    } else {
+      toast.error(rDelError);
+
+      dispatch({ type: DEL_ROOM_RESET });
+    }
+  }, [rIsDeleted, rDelMsg, rDelError]);
 
   return (
     <Fragment>
@@ -148,13 +185,18 @@ const R_table = ({ rooms, load }) => {
                         }}
                       >
                         <Tooltip title="Edit">
-                          <IconButton>
+                          <IconButton onClick={() => upHandler(item.id)}>
                             <EditIcon sx={{ color: yellow[800] }} />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Remove">
                           <IconButton onClick={() => confirm(item.id)}>
-                            <PersonRemoveAlt1Icon sx={{ color: red[500] }} />
+                            <BookmarkRemoveIcon sx={{ color: red[500] }} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Detail">
+                          <IconButton>
+                            <ArrowCircleRightIcon sx={{ color: blue[500] }} />
                           </IconButton>
                         </Tooltip>
                       </Box>
@@ -184,56 +226,72 @@ const R_table = ({ rooms, load }) => {
         slotProps={{ backdrop: { timeout: 500 } }}
       >
         <Fade in={del}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 400,
-              bgcolor: "#ffff",
-              boxShadow: 24,
-              p: 2,
-              borderRadius: "5px",
-            }}
-          >
-            <>
-              <Typography align="center">
-                By deleting this room, it will delete all related data
-              </Typography>
-              <Typography align="center">
-                such as scores, answer analysis, penalty and log
-              </Typography>
-              <Typography align="center">
-                Besure to download report sheet before continuing this process
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "end",
-                  gap: "10px",
-                  mt: 2,
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="warning"
-                  onClick={() => setDel(false)}
+          {rUpdelLoad ? (
+            <Box
+              sx={{
+                height: "100%",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Loader />
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: 400,
+                bgcolor: "#ffff",
+                boxShadow: 24,
+                p: 2,
+                borderRadius: "5px",
+              }}
+            >
+              <>
+                <Typography align="center">
+                  By deleting this room, it will delete all related data
+                </Typography>
+                <Typography align="center">
+                  such as scores, answer analysis, penalty and log
+                </Typography>
+                <Typography align="center">
+                  Besure to download report sheet before continuing this process
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "end",
+                    gap: "10px",
+                    mt: 2,
+                  }}
                 >
-                  cancel
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={() => delRoom(rId)}
-                >
-                  delete
-                </Button>
-              </Box>
-            </>
-          </Box>
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    onClick={() => setDel(false)}
+                  >
+                    cancel
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => delRoom(rId)}
+                  >
+                    delete
+                  </Button>
+                </Box>
+              </>
+            </Box>
+          )}
         </Fade>
       </Modal>
+
+      <R_Update open={update} close={() => setUpdate(false)} />
     </Fragment>
   );
 };
