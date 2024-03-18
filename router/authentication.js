@@ -2,6 +2,7 @@ import express from "express";
 import { client } from "../connection/connection.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { authenticatedUser } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -121,9 +122,19 @@ router.post("/login", async (req, res) => {
 
 // LOGOUT
 router.post("/logout", (req, res) => {
-  res.clearCookie("token");
+  // res.clearCookie("token", { path: "/" });
 
-  res.status(200).json({ message: "logout successful" });
+  try {
+    res.cookie("token", null, {
+      httpOnly: true,
+      maxAge: new Date(Date.now()),
+      sameSite: "None", // Coba tambahkan opsi sameSite
+    });
+
+    res.status(200).json({ message: "logout successful" });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
 });
 
 export default router;

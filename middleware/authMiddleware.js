@@ -4,20 +4,27 @@ import { client } from "../connection/connection.js";
 export const authenticatedUser = async (req, res, next) => {
   const { token } = req.cookies;
 
-  if (!token)
+  if (!token) {
     return res
       .status(401)
       .json({ message: "You are not authorized to access this page" });
+  }
 
-  const decode = jwt.verify(token, process.env.JWT);
+  try {
+    const decode = jwt.verify(token, process.env.JWT);
 
-  const data = await client.query("SELECT * FROM users WHERE _id = $1", [
-    decode.id,
-  ]);
+    const data = await client.query("SELECT * FROM users WHERE _id = $1", [
+      decode.id,
+    ]);
 
-  req.user = data.rows[0];
+    req.user = data.rows[0];
 
-  next();
+    next();
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ message: "Token is not valid, try to login" });
+  }
 };
 
 export const authorizeRoles = (...roles) => {
@@ -33,12 +40,15 @@ export const authorizeRoles = (...roles) => {
 
       req.user = data.rows[0];
 
-      if (!roles.includes(req.user.role))
+      if (!roles.includes(req.user.role)) {
         return res.status(403).json({ message: "Unauthorized user" });
+      }
 
       next();
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res
+        .status(401)
+        .json({ message: "Token is not valid, try to login" });
     }
   };
 };

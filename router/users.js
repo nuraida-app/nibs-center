@@ -293,6 +293,28 @@ router.get(
   }
 );
 
+// GET STUDENT BY GRADE
+router.get(
+  "/students-by-grade/:grade",
+  authenticatedUser,
+  authorizeRoles("admin", "teacher"),
+  async (req, res) => {
+    try {
+      const students = await client.query(
+        "SELECT users._id, users.nis, users.name, grades.grade, class.class FROM users " +
+          "INNER JOIN grades ON users.grade_id = grades.grade_id " +
+          "INNER JOIN class ON users.class_id = class.class_id " +
+          "WHERE users.grade_id = $1",
+        [req.params.grade]
+      );
+
+      res.status(200).json(students.rows);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
 // DETAIL STUDENT
 router.get(
   "/student-detail/:id",
@@ -320,7 +342,7 @@ router.get(
   }
 );
 
-// UPDATE TEACHER DATA
+// UPDATE STUDENT DATA
 router.put(
   "/student-update/:id",
   authenticatedUser,
