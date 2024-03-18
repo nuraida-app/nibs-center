@@ -4,7 +4,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -15,7 +15,7 @@ import Admin_page from "./pages/admin/Admin_page";
 import Teacher_page from "./pages/teacher/Teacher_page";
 
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loadUser } from "./Redux/auth/auth_action";
 import Admin_Teacher_page from "./pages/admin/teacher/Admin_Teacher_page";
 import Admin_Subject_Page from "./pages/admin/subject/Admin_Subject_Page";
@@ -27,9 +27,12 @@ import Q_list from "./pages/admin/exam/question/Q_list";
 import Playground from "./Playground";
 import Rooms from "./pages/admin/exam/rooms/Rooms";
 import Detail from "./pages/admin/exam/detail/Detail";
+import { LOGOUT_RESET } from "./Redux/auth/auth_const";
 
 function App() {
   const dispatch = useDispatch();
+
+  const { logout, isLogout, logoutError } = useSelector((state) => state.auth);
 
   const load = JSON.parse(localStorage.getItem("login"));
 
@@ -38,6 +41,14 @@ function App() {
       dispatch(loadUser());
     }
   }, [load]);
+
+  useEffect(() => {
+    if (isLogout) {
+      toast.success(logout);
+    } else {
+      toast.error(logoutError);
+    }
+  }, [isLogout, logout, logoutError]);
 
   return (
     <BrowserRouter>
@@ -78,7 +89,7 @@ function App() {
         <Route path="/center/admin-schedule-page" element={<Rooms />} />
 
         <Route
-          path="/center/admin/classroom/:name/:roomId/exam/:id"
+          path="/center/admin/classroom/:name/:roomId/exam/:id/grade/:grade"
           element={<Detail />}
         />
 

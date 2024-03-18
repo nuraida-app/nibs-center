@@ -9,6 +9,9 @@ import {
   DETAIL_STUDENT_FAIL,
   DETAIL_STUDENT_REQ,
   DETAIL_STUDENT_SUCCESS,
+  STUDENTS_BY_CLASS_REQ,
+  STUDENTS_BY_GRADE_FAIL,
+  STUDENTS_BY_GRADE_SUCCESS,
   STUDENTS_GET_FAIL,
   STUDENTS_GET_REQ,
   STUDENTS_GET_SUCCESS,
@@ -38,6 +41,21 @@ export const getStudents = () => async (dispatch) => {
     dispatch({ type: STUDENTS_GET_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: STUDENTS_GET_FAIL, payload: error.message });
+  }
+};
+
+export const getStudentsByGrade = (gradeId) => async (dispatch) => {
+  try {
+    dispatch({ type: STUDENTS_BY_CLASS_REQ });
+
+    const { data } = await axios.get(
+      `/api/users/students-by-grade/${gradeId}`,
+      config
+    );
+
+    dispatch({ type: STUDENTS_BY_GRADE_SUCCESS, students: data });
+  } catch (error) {
+    dispatch({ tyep: STUDENTS_BY_GRADE_FAIL, error: error.message });
   }
 };
 

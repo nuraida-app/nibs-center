@@ -205,7 +205,7 @@ const R_table = ({ rooms, load }) => {
                         <Tooltip title="Detail">
                           <IconButton
                             component={Link}
-                            to={`/center/admin/classroom/${item.room_name}/${item.id}/exam/${item.exam_id}`}
+                            to={`/center/admin/classroom/${item.room_name}/${item.id}/exam/${item.exam_id}/grade/${item.grade_id}`}
                           >
                             <ArrowCircleRightIcon sx={{ color: blue[500] }} />
                           </IconButton>

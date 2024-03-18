@@ -11,6 +11,12 @@ import {
   DETAIL_STUDENT_REQ,
   DETAIL_STUDENT_RESET,
   DETAIL_STUDENT_SUCCESS,
+  STUDENTS_BY_CLASS_FAIL,
+  STUDENTS_BY_CLASS_REQ,
+  STUDENTS_BY_CLASS_SUCCESS,
+  STUDENTS_BY_GRADE_FAIL,
+  STUDENTS_BY_GRADE_REQ,
+  STUDENTS_BY_GRADE_SUCCESS,
   STUDENTS_GET_FAIL,
   STUDENTS_GET_REQ,
   STUDENTS_GET_SUCCESS,
@@ -45,6 +51,38 @@ export const getStudentsReducers = (state = [], action) => {
         sLoad: false,
         sError: action.payload,
       };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const getStudentsByGradeReducer = (state = [], action) => {
+  switch (action.type) {
+    case STUDENTS_BY_GRADE_REQ:
+      return { sloading: true };
+
+    case STUDENTS_BY_GRADE_SUCCESS:
+      return { sloading: false, students: action.students };
+
+    case STUDENTS_BY_GRADE_FAIL:
+      return { sloading: false, serror: action.error };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const getStudentsByClassReducer = (state = [], action) => {
+  switch (action.type) {
+    case STUDENTS_BY_CLASS_REQ:
+      return { sloading: true };
+
+    case STUDENTS_BY_CLASS_SUCCESS:
+      return { sloading: false, students: action.students };
+
+    case STUDENTS_BY_CLASS_FAIL:
+      return { sloading: false, serror: action.error };
 
     default:
       return { ...state };

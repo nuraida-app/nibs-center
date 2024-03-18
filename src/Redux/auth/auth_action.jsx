@@ -6,20 +6,23 @@ import {
   LOAD_USER_FAIL,
   LOAD_USER_REQ,
   LOAD_USER_SUCCESS,
+  LOGOUT_FAIL,
+  LOGOUT_REQ,
+  LOGOUT_SUCCESS,
 } from "./auth_const";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE;
 
+const config = {
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
+};
+
 export const auth = (userData) => async (dispatch) => {
   try {
     dispatch({ type: AUTH_REQ });
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
-    };
 
     const { data } = await axios.post("/api/auth/login", userData, config);
 
@@ -34,16 +37,23 @@ export const auth = (userData) => async (dispatch) => {
   }
 };
 
+export const logoutUser = () => async (dispatch) => {
+  try {
+    dispatch({ type: LOGOUT_REQ });
+
+    const { data } = await axios.post("/api/auth/logout", config);
+
+    localStorage.removeItem("login");
+
+    dispatch({ type: LOGOUT_SUCCESS, logout: data.message });
+  } catch (error) {
+    dispatch({ type: LOGOUT_FAIL, error: error.message });
+  }
+};
+
 export const loadUser = () => async (dispatch) => {
   try {
     dispatch({ type: LOAD_USER_REQ });
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
-    };
 
     const { data } = await axios.get("/api/users/profile", config);
 

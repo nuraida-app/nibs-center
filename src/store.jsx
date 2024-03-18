@@ -26,6 +26,8 @@ import {
 import {
   addStudentReducer,
   getStudentDetailReducer,
+  getStudentsByClassReducer,
+  getStudentsByGradeReducer,
   getStudentsReducers,
   updelSudentReducer,
   uploadStudentsReducer,
@@ -54,6 +56,8 @@ const reducer = {
   t_updel: updelTeacherReducer,
 
   students: getStudentsReducers,
+  studentsByGrade: getStudentsByGradeReducer,
+  studentsByClass: getStudentsByClassReducer,
   student: getStudentDetailReducer,
   st_add: addStudentReducer,
   st_upload: uploadStudentsReducer,
