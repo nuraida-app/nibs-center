@@ -21,6 +21,7 @@ export const authReducer = (state = {}, action) => {
         ...state,
         isAuthenticated: false,
         isAuthLoading: true,
+        logoutLoading: true,
       };
 
     case AUTH_SUCCESS:
@@ -30,15 +31,18 @@ export const authReducer = (state = {}, action) => {
         isAuthenticated: true,
         isAuthLoading: false,
         isLogout: false,
+        logoutLoading: false,
         user: action.payload,
         message: action.message,
       };
 
     case LOGOUT_SUCCESS:
+      localStorage.removeItem("login");
       return {
         ...state,
         isAuthenticated: false,
         isAuthLoading: false,
+        logoutLoading: false,
         user: null,
         message: null,
         isLogout: true,
@@ -51,6 +55,7 @@ export const authReducer = (state = {}, action) => {
         ...state,
         isAuthenticated: false,
         isAuthLoading: false,
+        logoutLoading: false,
         authError: action.payload,
       };
 
@@ -59,6 +64,7 @@ export const authReducer = (state = {}, action) => {
         ...state,
         isAuthenticated: false,
         isAuthLoading: false,
+        logoutLoading: false,
         logoutError: action.error,
       };
 
@@ -68,6 +74,7 @@ export const authReducer = (state = {}, action) => {
         ...state,
         isAuthenticated: false,
         isAuthLoading: false,
+        logoutLoading: false,
         authError: null,
         user: null,
       };

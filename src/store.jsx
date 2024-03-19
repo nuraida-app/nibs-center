@@ -35,6 +35,7 @@ import {
 import {
   addExamReducer,
   addRoomReducer,
+  getExamByGradeReducer,
   getExamsReducer,
   getRoomsReducer,
   updelExamReducer,
@@ -78,6 +79,7 @@ const reducer = {
   exams: getExamsReducer,
   e_add: addExamReducer,
   e_updel: updelExamReducer,
+  examsByGrade: getExamByGradeReducer,
 
   Quizes: getQuizesReducer,
   q_add: addQuizReducer,

@@ -33,7 +33,7 @@ export const auth = (userData) => async (dispatch) => {
     });
   } catch (error) {
     console.log(error);
-    dispatch({ type: AUTH_FAIL, payload: error.message });
+    dispatch({ type: AUTH_FAIL, payload: error.response.data.message });
   }
 };
 
@@ -42,8 +42,6 @@ export const logoutUser = () => async (dispatch) => {
     dispatch({ type: LOGOUT_REQ });
 
     const { data } = await axios.post("/api/auth/logout", config);
-
-    localStorage.removeItem("login");
 
     dispatch({ type: LOGOUT_SUCCESS, logout: data.message });
   } catch (error) {

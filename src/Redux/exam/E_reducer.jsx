@@ -21,6 +21,9 @@ import {
   DETAIL_EXAM_SUCCESS,
   DETAIL_ROOM_REQ,
   DETAIL_ROOM_SUCCESS,
+  GET_EXAM_BY_GARDE_FAIL,
+  GET_EXAM_BY_GARDE_REQ,
+  GET_EXAM_BY_GARDE_SUCCESS,
   GET_EXAM_FAIL,
   GET_EXAM_REQ,
   GET_EXAM_SUCCESS,
@@ -80,6 +83,22 @@ export const getExamsReducer = (state = [], action) => {
         ...state,
         detail: null,
       };
+
+    default:
+      return { ...state };
+  }
+};
+
+export const getExamByGradeReducer = (state = [], action) => {
+  switch (action.type) {
+    case GET_EXAM_BY_GARDE_REQ:
+      return { ...state, eg_loading: true };
+
+    case GET_EXAM_BY_GARDE_SUCCESS:
+      return { ...state, eg_loading: false, exams: action.exams };
+
+    case GET_EXAM_BY_GARDE_FAIL:
+      return { ...state, eg_loading: false, examsError: action.error };
 
     default:
       return { ...state };

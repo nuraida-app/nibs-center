@@ -27,20 +27,21 @@ import Q_list from "./pages/admin/exam/question/Q_list";
 import Playground from "./Playground";
 import Rooms from "./pages/admin/exam/rooms/Rooms";
 import Detail from "./pages/admin/exam/detail/Detail";
-import { LOGOUT_RESET } from "./Redux/auth/auth_const";
 
 function App() {
   const dispatch = useDispatch();
 
-  const { logout, isLogout, logoutError } = useSelector((state) => state.auth);
-
-  const load = JSON.parse(localStorage.getItem("login"));
+  const { logout, isLogout, logoutError, user } = useSelector(
+    (state) => state.auth
+  );
 
   useEffect(() => {
+    const load = JSON.parse(localStorage.getItem("login"));
+
     if (load) {
       dispatch(loadUser());
     }
-  }, [load]);
+  }, [dispatch, user?.role]);
 
   useEffect(() => {
     if (isLogout) {

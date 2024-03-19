@@ -16,7 +16,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../../../Redux/auth/auth_action";
-import Loader from "../../../component/Loader/Loader";
+import Loader from "../../components/loader/Loader";
 
 const pages = ["Products", "Pricing", "Blog"];
 
@@ -41,6 +41,9 @@ const Topbar = () => {
     setAnchorElUser(null);
   };
 
+  // USER INFO
+  const { user, isAuthLoading } = useSelector((state) => state.auth);
+
   // LOGOUT
   const { logoutLoading } = useSelector((state) => state.auth);
 
@@ -62,8 +65,6 @@ const Topbar = () => {
             <Typography
               variant="h6"
               noWrap
-              component="a"
-              href="#app-bar-with-responsive-menu"
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
@@ -73,7 +74,7 @@ const Topbar = () => {
                 textDecoration: "none",
               }}
             >
-              NIBS CENTER
+              {isAuthLoading ? null : user?.name}
             </Typography>
           </Box>
 

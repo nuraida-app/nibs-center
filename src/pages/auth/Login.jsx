@@ -11,7 +11,7 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { auth } from "../../Redux/auth/auth_action";
+import { auth, loadUser } from "../../Redux/auth/auth_action";
 import Loader from "../component/Loader/Loader";
 import { green, red } from "@mui/material/colors";
 import { toast } from "react-toastify";
@@ -186,7 +186,7 @@ const Login = () => {
             onSubmit={loginHandler}
           >
             <Input
-              type="text"
+              type={role === "student" ? "number" : "text"}
               placeholder={
                 role === "student"
                   ? "NIS"

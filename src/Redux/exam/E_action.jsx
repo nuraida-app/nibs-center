@@ -18,6 +18,9 @@ import {
   DETAIL_ROOM_FAIL,
   DETAIL_ROOM_REQ,
   DETAIL_ROOM_SUCCESS,
+  GET_EXAM_BY_GARDE_FAIL,
+  GET_EXAM_BY_GARDE_REQ,
+  GET_EXAM_BY_GARDE_SUCCESS,
   GET_EXAM_FAIL,
   GET_EXAM_REQ,
   GET_EXAM_SUCCESS,
@@ -51,6 +54,23 @@ export const getExams = () => async (dispatch) => {
     dispatch({ type: GET_EXAM_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: GET_EXAM_FAIL, payload: error.message });
+  }
+};
+
+// EXAM BY GRADE
+export const getExamByGrade = (grade) => async (dispatch) => {
+  try {
+    dispatch({ type: GET_EXAM_BY_GARDE_REQ });
+
+    const { data } = await axios.get(
+      `/api/exams/show-exams-by-grade/${grade}`,
+      config
+    );
+
+    dispatch({ type: GET_EXAM_BY_GARDE_SUCCESS, exams: data });
+  } catch (error) {
+    console.log(error);
+    dispatch({ type: GET_EXAM_BY_GARDE_FAIL, error: error.message });
   }
 };
 
