@@ -34,7 +34,6 @@ router.post("/login", async (req, res) => {
               res.cookie("token", token, {
                 httpOnly: true,
                 maxAge: expires_cookie,
-                sameSite: "None", // Coba tambahkan opsi sameSite
               });
 
               res.status(200).json({ message: "Login successful", user });

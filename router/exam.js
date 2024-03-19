@@ -82,7 +82,11 @@ router.get(
   async (req, res) => {
     try {
       const data = await client.query(
-        "SELECT exams.exam_name, users.name, subject.subject, exams.time, exams.pg, exams.essay, exams.status, grades.grade FROM exams  INNER JOIN users ON exams.teacher_id = users._id INNER JOIN subject ON exams.subject_id = subject.subject_id INNER JOIN grades ON exams.grade_id = grades.grade_id WHERE exams.grade_id = $1  ORDER BY exams.exam_name ASC",
+        "SELECT exams.exam_name, users.name, exams.time, exams.pg, " +
+          "exams.essay, exams.status, grades.grade FROM exams  " +
+          "INNER JOIN users ON exams.teacher_id = users._id " +
+          "INNER JOIN grades ON exams.grade_id = grades.grade_id " +
+          "WHERE exams.grade_id = $1  ORDER BY exams.exam_name ASC",
         [req.params.grade]
       );
 

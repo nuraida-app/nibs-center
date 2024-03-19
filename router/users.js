@@ -128,10 +128,43 @@ router.post("/create-user", authenticatedUser, async (req, res) => {
   }
 });
 
-// GET USER PROFILE
+// GET ADMIN PROFILE
 router.get("/profile", authenticatedUser, async (req, res) => {
   try {
-    res.status(200).json(req.user);
+    if (req.user.role === "student") {
+      const data = await client.query(
+        "SELECT users.nis, users.name, users.grade_id, users.class_id, grades.grade, class.class, users.role FROM users " +
+          "INNER JOIN grades ON users.grade_id = grades.grade_id " +
+          "INNER JOIN class ON users.class_id = class.class_id " +
+          "WHERE users._id = $1",
+        [req.user._id]
+      );
+
+      const student = data.rows[0];
+
+      res.status(200).json(student);
+    } else {
+      res.status(200).json(req.user);
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET STUDENT PROFILE
+router.get("/student-profile", authenticatedUser, async (req, res) => {
+  try {
+    const data = await client.query(
+      "SELECT users.nis, users.name, grades.grade, class.class, users.role FROM users " +
+        "INNER JOIN grades ON users.grade_id = grades.grade_id " +
+        "INNER JOIN class ON users.class_id = class.class_id " +
+        "WHERE users._id = $1",
+      [req.user._id]
+    );
+
+    const student = data.rows[0];
+
+    res.status(200).json(student);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
