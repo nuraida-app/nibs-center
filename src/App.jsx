@@ -27,6 +27,8 @@ import Q_list from "./pages/admin/exam/question/Q_list";
 import Playground from "./Playground";
 import Rooms from "./pages/admin/exam/rooms/Rooms";
 import Detail from "./pages/admin/exam/detail/Detail";
+import E_page from "./pages/student/exam/E_page";
+import E_Start from "./pages/student/exam/start/E_Start";
 
 function App() {
   const dispatch = useDispatch();
@@ -101,6 +103,13 @@ function App() {
         {/* STUDENT ROUTS */}
 
         <Route path="/student-dashboard" element={<Student_page />} />
+
+        <Route path="/student-exam" element={<E_page />} />
+
+        <Route
+          path="/start-exam/:id/:name/grade/:gradeId"
+          element={<E_Start />}
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -97,8 +97,6 @@ const Login = () => {
       toast.error(authError);
 
       dispatch({ type: AUTH_RESET });
-
-      localStorage.removeItem("login");
     }
   }, [isAuthenticated, message, authError, user]);
 

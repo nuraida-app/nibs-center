@@ -26,6 +26,8 @@ export const authReducer = (state = {}, action) => {
 
     case AUTH_SUCCESS:
     case LOAD_USER_SUCCESS:
+      localStorage.setItem("login", JSON.stringify("login"));
+
       return {
         ...state,
         isAuthenticated: true,
