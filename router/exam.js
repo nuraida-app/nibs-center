@@ -82,10 +82,11 @@ router.get(
   async (req, res) => {
     try {
       const data = await client.query(
-        "SELECT exams.exam_name, users.name, exams.time, exams.pg, " +
+        "SELECT exams._id, exams.exam_name, users.name, exams.time, exams.pg, exam_rooms.date_start, " +
           "exams.essay, exams.status, grades.grade FROM exams  " +
           "INNER JOIN users ON exams.teacher_id = users._id " +
           "INNER JOIN grades ON exams.grade_id = grades.grade_id " +
+          "INNER JOIN exam_rooms ON exam_rooms.exam_id = exams._id " +
           "WHERE exams.grade_id = $1  ORDER BY exams.exam_name ASC",
         [req.params.grade]
       );
@@ -107,7 +108,7 @@ router.get(
 router.get(
   "/:id",
   authenticatedUser,
-  authorizeRoles("admin", "teacher"),
+  authorizeRoles("admin", "teacher", "student"),
   async (req, res) => {
     try {
       const data = await client.query(
