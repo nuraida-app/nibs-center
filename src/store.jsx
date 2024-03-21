@@ -46,6 +46,12 @@ import {
   getQuizesReducer,
   quizUploadReducer,
 } from "./Redux/exam/Q_reducer";
+import {
+  createAnswerReducer,
+  getAnswerReducer,
+  getMyAnswerReducer,
+  updateAnswerReducer,
+} from "./Redux/answer/A_reducer";
 
 const reducer = {
   auth: authReducer,
@@ -84,6 +90,11 @@ const reducer = {
   Quizes: getQuizesReducer,
   q_add: addQuizReducer,
   q_upload: quizUploadReducer,
+
+  answers: getAnswerReducer,
+  myAnswers: getMyAnswerReducer,
+  a_add: createAnswerReducer,
+  a_update: updateAnswerReducer,
 
   rooms: getRoomsReducer,
   r_add: addRoomReducer,
