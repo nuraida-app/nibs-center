@@ -66,11 +66,26 @@ router.post(
   authorizeRoles("student"),
   async (req, res) => {
     try {
-      const { exam_id, quiz_id, answer, answer_essay } = req.body;
+      const { exam_id, quiz_id, mc, essay } = req.body;
 
+      // Check if answer already exists for given exam_id, quiz_id, and user (nis)
+      const existingAnswer = await client.query(
+        "SELECT * FROM answers WHERE exam_id = $1 AND quiz_id = $2 AND nis = $3",
+        [exam_id, quiz_id, req.user.nis]
+      );
+
+      if (existingAnswer.rows.length > 0) {
+        // If an answer already exists, delete it first
+        await client.query(
+          "DELETE FROM answers WHERE exam_id = $1 AND quiz_id = $2 AND nis = $3",
+          [exam_id, quiz_id, req.user.nis]
+        );
+      }
+
+      // Insert the new answer
       const data = await client.query(
-        "INSERT INTO answers (exam_id, quiz_id, student_id, answer, answer_essay) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-        [exam_id, quiz_id, req.user._id, answer, answer_essay]
+        "INSERT INTO answers (exam_id, quiz_id, nis, mc, essay) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+        [exam_id, quiz_id, req.user.nis, mc, essay]
       );
 
       const new_answer = data.rows[0];
@@ -78,8 +93,27 @@ router.post(
       if (new_answer) {
         return res.status(200).json({ message: "Saved", new_answer });
       } else {
-        return res.status(500).json({ message: "Not Save" });
+        return res.status(500).json({ message: "Not Saved" });
       }
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// GET STUDENTS ANSWER BY EXAM AND NIS
+router.get(
+  "/get-my-answer/:exam_id",
+  authenticatedUser,
+  authorizeRoles("student"),
+  async (req, res) => {
+    try {
+      const data = await client.query(
+        "SELECT * FROM answers WHERE exam_id = $1 AND nis = $2",
+        [req.params.exam_id, req.user.nis]
+      );
+
+      res.status(200).json(data.rows);
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
