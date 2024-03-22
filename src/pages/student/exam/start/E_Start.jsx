@@ -18,11 +18,11 @@ const E_Start = () => {
     dispatch(getDetailExam(params.id));
   }, [params]);
   return (
-    <Fragment>
+    <Box sx={{ position: "relative" }}>
       <Topbar user={user} load={isAuthLoading} exam={exam_detail} />
 
       <E_questions quiz={exam_detail?.questions} load={detail_load} />
-    </Fragment>
+    </Box>
   );
 };
 

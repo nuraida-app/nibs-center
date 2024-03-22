@@ -40,7 +40,8 @@ const columns = [
   { id: "exam", label: "Exam", minWidth: 120 },
   { id: "grade", label: "Grade", minWidth: 30 },
   { id: "status", label: "Status", minWidth: 80 },
-  { id: "schedule", label: "Schedule", minWidth: 80 },
+  { id: "start", label: "Start", minWidth: 80 },
+  { id: "end", label: "End", minWidth: 80 },
   { id: "code", label: "Code", minWidth: 120 },
   { id: "action", label: "Action", minWidth: 120 },
 ];
@@ -154,29 +155,35 @@ const R_table = ({ rooms, load }) => {
                     <TableCell align="center">{item.exam_name}</TableCell>
                     <TableCell align="center">{item.grade}</TableCell>
                     <TableCell align="center">
-                      <Typography
-                        fontWeight={700}
-                        sx={{
-                          color:
-                            item.status === 1
-                              ? blue[700]
-                              : item.status === 2
-                              ? yellow[800]
-                              : red[700],
-                        }}
-                      >
-                        {item.status === 1
-                          ? "Not Started"
-                          : item.status === 2
-                          ? "In Progress"
-                          : "Completed"}
+                      <Typography fontWeight={700}>
+                        {new Date(item.date_start) > new Date()
+                          ? "Not started"
+                          : new Date(item.date_end) < new Date()
+                          ? "Finished"
+                          : "Started"}
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
-                      {item.date_start && item.time_start
+                      {item.date_start
                         ? `${new Date(item.date_start).toLocaleDateString(
-                            "id-ID"
-                          )} : ${item.time_start}`
+                            "id-ID",
+                            {
+                              hour: "numeric",
+                              minute: "numeric",
+                            }
+                          )}`
+                        : "-"}
+                    </TableCell>
+
+                    <TableCell align="center">
+                      {item.date_start
+                        ? `${new Date(item.date_end).toLocaleDateString(
+                            "id-ID",
+                            {
+                              hour: "numeric",
+                              minute: "numeric",
+                            }
+                          )}`
                         : "-"}
                     </TableCell>
                     <TableCell align="center">

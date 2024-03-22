@@ -18,6 +18,12 @@ import Loader from "../../../component/Loader/Loader";
 import { addRoom, getRooms } from "../../../../Redux/exam/E_action";
 import { ADD__ROOM_RESET } from "../../../../Redux/exam/E_const";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const R_add = ({ open, close }) => {
   const dispatch = useDispatch();
@@ -30,7 +36,7 @@ const R_add = ({ open, close }) => {
   const [isScheduled, setSchedule] = useState("1");
 
   const [date, setDate] = useState(null);
-  const [time, setTime] = useState(null);
+  const [dateEnd, setDateEnd] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [tId, setT] = useState("");
@@ -53,28 +59,17 @@ const R_add = ({ open, close }) => {
   };
 
   const handleDateTimeChange = (newDateTime) => {
-    const dateObj = new Date(newDateTime);
+    // Mendapatkan waktu lokal dari string input dan menetapkan zona waktu WIB
+    const localTime = dayjs(newDateTime).tz("Asia/Jakarta");
 
-    // Mendapatkan offset zona waktu dalam menit
-    const timezoneOffset = dateObj.getTimezoneOffset();
+    setDate(localTime);
+  };
 
-    // Menambahkan offset zona waktu agar waktu yang diambil sesuai dengan zona waktu yang dipilih
-    dateObj.setMinutes(dateObj.getMinutes() - timezoneOffset);
+  const handleDateEndTimeChange = (newDateTime) => {
+    // Mendapatkan waktu lokal dari string input dan menetapkan zona waktu WIB
+    const localTime = dayjs(newDateTime).tz("Asia/Jakarta");
 
-    // Mengambil bagian-bagian dari tanggal
-    const year = dateObj.getFullYear();
-    const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Tambahkan padding nol jika perlu
-    const day = String(dateObj.getDate()).padStart(2, "0"); // Tambahkan padding nol jika perlu
-
-    // Menggabungkan kembali ke dalam format yang diinginkan
-    const formattedDate = `${day}-${month}-${year}`;
-
-    // Ambil waktu dalam format HH:MM
-    const formattedTime = dateObj.toISOString().slice(11, 16);
-
-    // Set state tanggal dan waktu
-    setDate(formattedDate);
-    setTime(formattedTime);
+    setDateEnd(localTime);
   };
 
   const createRoom = (e) => {
@@ -86,7 +81,7 @@ const R_add = ({ open, close }) => {
       name: name,
       description: description,
       date_start: date,
-      time_start: time,
+      date_end: dateEnd,
     };
 
     dispatch(addRoom(data));
@@ -96,8 +91,8 @@ const R_add = ({ open, close }) => {
     if (rIsAdded) {
       toast.success(rSuccessMsg);
 
-      setDate("");
-      setTime("");
+      setDate(null);
+      setDateEnd(null);
       setDescription("");
       setName("");
       setSelectedExam("");
@@ -200,14 +195,25 @@ const R_add = ({ open, close }) => {
               </FormControl>
 
               {isScheduled === "2" && (
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={["DateTimePicker"]}>
-                    <DateTimePicker
-                      label="Schedule"
-                      onChange={handleDateTimeChange}
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
+                <>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={["DateTimePicker"]}>
+                      <DateTimePicker
+                        label="Start"
+                        onChange={handleDateTimeChange}
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
+
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={["DateTimePicker"]}>
+                      <DateTimePicker
+                        label="End"
+                        onChange={handleDateEndTimeChange}
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
+                </>
               )}
 
               <Box sx={{ display: "flex", justifyContent: "end", gap: "10px" }}>

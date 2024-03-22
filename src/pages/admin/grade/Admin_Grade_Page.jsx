@@ -3,7 +3,6 @@ import Topbar from "../components/topbar/Topbar";
 import { Box } from "@mui/material";
 import SideMenu from "../components/menu/SideMenu";
 import G_Content from "./G_Content";
-
 import { useDispatch } from "react-redux";
 import { getGrades } from "../../../Redux/grade/G_action";
 

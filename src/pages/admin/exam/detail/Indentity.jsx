@@ -81,13 +81,21 @@ const Indentity = ({ room, load }) => {
                 <TableCell>Date</TableCell>
                 <TableCell align="center">:</TableCell>
                 <TableCell>
-                  {new Date(room?.date_start).toLocaleDateString("id-ID")}
+                  {new Date(room?.date_start).toLocaleDateString("id-ID", {
+                    hour: "numeric",
+                    minute: "numeric",
+                  })}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Time</TableCell>
+                <TableCell>End</TableCell>
                 <TableCell align="center">:</TableCell>
-                <TableCell>{room?.time_start}</TableCell>
+                <TableCell>
+                  {new Date(room?.date_end).toLocaleDateString("id-ID", {
+                    hour: "numeric",
+                    minute: "numeric",
+                  })}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>

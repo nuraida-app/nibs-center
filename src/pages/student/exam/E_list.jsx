@@ -1,7 +1,11 @@
 import {
+  Backdrop,
   Box,
+  Button,
+  Fade,
   IconButton,
   Input,
+  Modal,
   Paper,
   Table,
   TableBody,
@@ -19,6 +23,7 @@ import { useEffect, useState } from "react";
 import { getExamByGrade } from "../../../Redux/exam/E_action";
 import { red } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const columns = [
   { id: 1, label: "No", minWidth: 30 },
@@ -55,8 +60,29 @@ const E_list = () => {
     }
   }, [user]);
 
-  const startExam = (id, name, grade) => {
-    navigate(`/start-exam/${id}/${name}/grade/${grade}`);
+  // Confirm
+  const [open, setOpen] = useState(false);
+  const [id, setId] = useState("");
+  const [name, setName] = useState("");
+  const [grade, setGrade] = useState("");
+  const [code, setCode] = useState("");
+  const [inputCode, setInputCode] = useState("");
+
+  const confirm = (id, name, grade, code) => {
+    setOpen(true);
+    setId(id);
+    setName(name);
+    setGrade(grade);
+    setCode(code);
+  };
+
+  // Start
+  const startExam = () => {
+    if (code === inputCode) {
+      navigate(`/start-exam/${id}/${name}/grade/${grade}`);
+    } else {
+      toast.error("Code is not valid");
+    }
   };
 
   return (
@@ -127,7 +153,12 @@ const E_list = () => {
                       <Tooltip title="Start">
                         <IconButton
                           onClick={() =>
-                            startExam(item._id, item.exam_name, item.grade)
+                            confirm(
+                              item._id,
+                              item.exam_name,
+                              item.grade,
+                              item.code
+                            )
                           }
                         >
                           <PlayCircleFilledIcon sx={{ color: red[800] }} />
@@ -141,6 +172,42 @@ const E_list = () => {
           )}
         </TableContainer>
       </Paper>
+
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        slots={{ backdrop: Backdrop }}
+        slotProps={{ backdrop: { timeout: 500 } }}
+      >
+        <Fade in={open}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 400,
+              bgcolor: "white",
+              p: 4,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "left",
+              gap: 3,
+            }}
+          >
+            <Input
+              fullWidth
+              type="text"
+              placeholder="Enter Code"
+              value={inputCode}
+              onChange={(e) => setInputCode(e.target.value)}
+            />
+            <Button variant="contained" color="error" onClick={startExam}>
+              verify
+            </Button>
+          </Box>
+        </Fade>
+      </Modal>
     </Box>
   );
 };

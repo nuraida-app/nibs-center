@@ -17,10 +17,13 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../../../Redux/auth/auth_action";
 import Loader from "../../../component/Loader/Loader";
+import Admin_Protection from "../../Admin_protection";
 
 const pages = ["Products", "Pricing", "Blog"];
 
 const Topbar = () => {
+  Admin_Protection();
+
   const dispatch = useDispatch();
 
   const [anchorElNav, setAnchorElNav] = useState(null);

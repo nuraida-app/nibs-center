@@ -19,6 +19,12 @@ import Loader from "../../../component/Loader/Loader";
 import { toast } from "react-toastify";
 import { UP_ROOM_RESET } from "../../../../Redux/exam/E_const";
 import { getRooms, updateRoom } from "../../../../Redux/exam/E_action";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const R_Update = ({ open, close }) => {
   const dispatch = useDispatch();
@@ -32,7 +38,11 @@ const R_Update = ({ open, close }) => {
   const [tId, setT] = useState("");
   const [eId, setE] = useState("");
   const [date, setDate] = useState(null);
-  const [time, setTime] = useState(null);
+  const [dateEnd, setDateEnd] = useState(null);
+
+  const [oldDate, setOldDate] = useState(null);
+  const [oldDateEnd, setOldDateEnd] = useState(null);
+
   const [selectedExam, setSelectedExam] = useState("");
 
   const handleExamSelect = (e) => {
@@ -51,38 +61,18 @@ const R_Update = ({ open, close }) => {
   };
 
   const handleDateTimeChange = (newDateTime) => {
-    const dateObj = new Date(newDateTime);
+    // Mendapatkan waktu lokal dari string input dan menetapkan zona waktu WIB
+    const localTime = dayjs(newDateTime).tz("Asia/Jakarta");
 
-    // Mendapatkan offset zona waktu dalam menit
-    const timezoneOffset = dateObj.getTimezoneOffset();
-
-    // Menambahkan offset zona waktu agar waktu yang diambil sesuai dengan zona waktu yang dipilih
-    dateObj.setMinutes(dateObj.getMinutes() - timezoneOffset);
-
-    // Mengambil bagian-bagian dari tanggal
-    const year = dateObj.getFullYear();
-    const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Tambahkan padding nol jika perlu
-    const day = String(dateObj.getDate()).padStart(2, "0"); // Tambahkan padding nol jika perlu
-
-    // Menggabungkan kembali ke dalam format yang diinginkan
-    const formattedDate = `${day}-${month}-${year}`;
-
-    // Ambil waktu dalam format HH:MM
-    const formattedTime = dateObj.toISOString().slice(11, 16);
-
-    // Set state tanggal dan waktu
-    setDate(formattedDate);
-    setTime(formattedTime);
+    setDate(localTime);
   };
 
-  let formattedOldDate = "";
-  if (room?.date_start) {
-    const oldDate = new Date(room.date_start);
-    const year = oldDate.getFullYear();
-    const month = String(oldDate.getMonth() + 1).padStart(2, "0");
-    const day = String(oldDate.getDate()).padStart(2, "0");
-    formattedOldDate = `${day}-${month}-${year}`;
-  }
+  const handleDateEndTimeChange = (newDateTime) => {
+    // Mendapatkan waktu lokal dari string input dan menetapkan zona waktu WIB
+    const localTime = dayjs(newDateTime).tz("Asia/Jakarta");
+
+    setDateEnd(localTime);
+  };
 
   const updateHandler = (e) => {
     e.preventDefault();
@@ -92,8 +82,8 @@ const R_Update = ({ open, close }) => {
       teacher_id: tId ? tId : room?.teacher_id,
       name: name,
       description: desc,
-      date_start: date ? date : formattedOldDate,
-      time_start: time ? time : room?.time_start,
+      date_start: date ? date : oldDate,
+      date_end: dateEnd ? dateEnd : oldDateEnd,
     };
 
     dispatch(updateRoom(roomId, data));
@@ -101,11 +91,13 @@ const R_Update = ({ open, close }) => {
 
   useEffect(() => {
     if (room) {
-      const { id, room_name, description } = room;
+      const { id, room_name, description, date_start, date_end } = room;
 
       setName(room_name);
       setDesc(description);
       setRoomId(id);
+      setOldDate(date_start);
+      setOldDateEnd(date_end);
     }
   }, [room]);
 
@@ -206,6 +198,15 @@ const R_Update = ({ open, close }) => {
                   <DateTimePicker
                     label="Schedule"
                     onChange={handleDateTimeChange}
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
+
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={["DateTimePicker"]}>
+                  <DateTimePicker
+                    label="Schedule"
+                    onChange={handleDateEndTimeChange}
                   />
                 </DemoContainer>
               </LocalizationProvider>
