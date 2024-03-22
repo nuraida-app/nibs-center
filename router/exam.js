@@ -83,7 +83,7 @@ router.get(
     try {
       const data = await client.query(
         "SELECT exams._id, exams.exam_name, users.name, exams.time, exams.pg, exam_rooms.date_start, " +
-          "exams.essay, exams.status, grades.grade FROM exams  " +
+          "exams.essay, exams.status, grades.grade, exam_rooms.code FROM exams  " +
           "INNER JOIN users ON exams.teacher_id = users._id " +
           "INNER JOIN grades ON exams.grade_id = grades.grade_id " +
           "INNER JOIN exam_rooms ON exam_rooms.exam_id = exams._id " +

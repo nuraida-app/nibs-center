@@ -66,7 +66,7 @@ router.post(
   authorizeRoles("student"),
   async (req, res) => {
     try {
-      const { exam_id, quiz_id, mc, essay } = req.body;
+      const { exam_id, quiz_id, quiz_type, mc, essay } = req.body;
 
       // Check if answer already exists for given exam_id, quiz_id, and user (nis)
       const existingAnswer = await client.query(
@@ -84,8 +84,8 @@ router.post(
 
       // Insert the new answer
       const data = await client.query(
-        "INSERT INTO answers (exam_id, quiz_id, nis, mc, essay) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-        [exam_id, quiz_id, req.user.nis, mc, essay]
+        "INSERT INTO answers (exam_id, quiz_id, quiz_type, nis, mc, essay) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+        [exam_id, quiz_id, quiz_type, req.user.nis, mc, essay]
       );
 
       const new_answer = data.rows[0];

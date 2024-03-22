@@ -18,7 +18,7 @@ router.get(
       if (admin) {
         const data = await client.query(
           "SELECT exam_rooms.id, exam_rooms.name AS room_name, exam_rooms.exam_id, exam_rooms.description, exam_rooms.code, grades.grade_id, grades.grade, " +
-            "users.name AS teacher_name, exams.exam_name, exam_rooms.status, exam_rooms.date_start, exam_rooms.time_start " +
+            "users.name AS teacher_name, exams.exam_name, exam_rooms.status, exam_rooms.date_start, exam_rooms.date_end " +
             "FROM exam_rooms " +
             "INNER JOIN users ON exam_rooms.teacher_id = users._id " +
             "INNER JOIN exams ON exam_rooms.exam_id = exams._id " +
@@ -80,7 +80,7 @@ router.post(
   authorizeRoles("admin", "teacher"),
   async (req, res) => {
     try {
-      const { name, description, teacher_id, exam_id, date_start, time_start } =
+      const { name, description, teacher_id, exam_id, date_start, date_end } =
         req.body;
 
       const checking = await client.query(
@@ -94,8 +94,8 @@ router.post(
         return res.status(500).json({ message: "Room name is already used" });
       } else {
         const data = await client.query(
-          "INSERT INTO exam_rooms (name, description, code, teacher_id, exam_id, date_start, time_start) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-          [name, description, code, teacher_id, exam_id, date_start, time_start]
+          "INSERT INTO exam_rooms (name, description, code, teacher_id, exam_id, date_start, date_end) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+          [name, description, code, teacher_id, exam_id, date_start, date_end]
         );
 
         const exam = data.rows[0];
@@ -122,7 +122,7 @@ router.get(
       const data = await client.query(
         "SELECT exam_rooms.id, exam_rooms.name AS room_name, exam_rooms.description, exam_rooms.code, grades.grade_id, grades.grade, " +
           "users._id AS teacher_id, users.name AS teacher_name, " +
-          "exams._id AS exam_id, exams.exam_name, exam_rooms.status, exam_rooms.date_start, exam_rooms.time_start " +
+          "exams._id AS exam_id, exams.exam_name, exam_rooms.status, exam_rooms.date_start, exam_rooms.date_end " +
           "FROM exam_rooms " +
           "INNER JOIN users ON exam_rooms.teacher_id = users._id " +
           "INNER JOIN exams ON exam_rooms.exam_id = exams._id " +
@@ -165,11 +165,11 @@ router.put(
   authorizeRoles("admin", "teaher"),
   async (req, res) => {
     try {
-      const { name, description, teacher_id, exam_id, date_start, time_start } =
+      const { name, description, teacher_id, exam_id, date_start, date_end } =
         req.body;
 
       const data = await client.query(
-        "UPDATE exam_rooms SET name = $1, description = $2, teacher_id = $3, exam_id = $4, date_start = $5, time_start = $6 " +
+        "UPDATE exam_rooms SET name = $1, description = $2, teacher_id = $3, exam_id = $4, date_start = $5, date_end = $6 " +
           "WHERE id = $7 RETURNING *",
         [
           name,
@@ -177,7 +177,7 @@ router.put(
           teacher_id,
           exam_id,
           date_start,
-          time_start,
+          date_end,
           req.params.id,
         ]
       );
