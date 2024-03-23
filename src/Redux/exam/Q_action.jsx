@@ -36,11 +36,26 @@ export const addQuiz = (qData) => async (dispatch) => {
   try {
     dispatch({ type: ADD_QUIZ_REQ });
 
-    const { data } = await axios.post("/api/quizes/create-quiz", qData, config);
+    const configAddQuiz = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true,
+    };
+
+    const { data } = await axios.post(
+      "/api/quizes/create-quiz",
+      qData,
+      configAddQuiz
+    );
 
     dispatch({ type: ADD_QUIZ_SUCCESS, payload: data.message });
   } catch (error) {
-    dispatch({ type: ADD_QUIZ_FAIL, payload: error.response.data.message });
+    console.log(error);
+    dispatch({
+      type: ADD_QUIZ_FAIL,
+      payload: error.response.data.message || error.message,
+    });
   }
 };
 

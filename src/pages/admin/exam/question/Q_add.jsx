@@ -26,13 +26,23 @@ const Q_add = ({ open, close }) => {
 
   const params = useParams();
   const editorRef = useRef(null);
+  const inputRef = useRef(null);
 
   const [quiz, setQuiz] = useState("");
   const [type, setType] = useState("1");
   const [answers, setAnswers] = useState(["", "", "", "", ""]);
   const [key, setKey] = useState("");
+  const [audio, setAudio] = useState("");
 
   const handleQuiz = (value) => setQuiz(value);
+
+  const clickAudio = () => inputRef.current.click();
+
+  const handleAudio = (e) => {
+    const file = e.target.files[0];
+
+    setAudio(file);
+  };
 
   const handleAnswerChange = (index, value) => {
     const newAnswers = [...answers];
@@ -59,6 +69,7 @@ const Q_add = ({ open, close }) => {
       exam_id: params.id,
       quiz_type: type,
       quiz: quiz,
+      audio: audio ? audio : null,
       answer_1: answers[0] || null,
       answer_2: answers[1] || null,
       answer_3: answers[2] || null,
@@ -91,7 +102,7 @@ const Q_add = ({ open, close }) => {
 
   const renderEditors = () => {
     return answers.map((answer, index) => (
-      <Box key={index}>
+      <Box key={index} sx={{ boxShadow: 4 }}>
         <Editor
           apiKey={import.meta.env.VITE_TINYMCE_KEY}
           onInit={(evt, editor) => (editorRef.current = editor)}
@@ -127,7 +138,7 @@ const Q_add = ({ open, close }) => {
               "removeformat | help",
             content_style:
               "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-            images_upload_url: `${import.meta.env.VITE_URL}/api/upload/image`,
+            images_upload_url: `${import.meta.env.VITE_BASE}/api/upload/images`,
           }}
           onEditorChange={(value) => handleAnswerChange(index, value)}
         />
@@ -160,7 +171,7 @@ const Q_add = ({ open, close }) => {
         >
           <Box sx={{ display: "flex", justifyContent: "space-between", p: 1 }}>
             <Typography variant="h6" align="center">
-              Add Question{" "}
+              Add Question
             </Typography>
 
             <FormControl sx={{ width: 300 }}>
@@ -195,10 +206,11 @@ const Q_add = ({ open, close }) => {
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
-                gap: "15px",
+                gap: "20px",
+                position: "relative",
               }}
             >
-              <Box>
+              <Box sx={{ boxShadow: 4 }}>
                 <Editor
                   apiKey={import.meta.env.VITE_TINYMCE_KEY}
                   onInit={(evt, editor) => (editorRef.current = editor)}
@@ -235,12 +247,29 @@ const Q_add = ({ open, close }) => {
                     content_style:
                       "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
                     images_upload_url: `${
-                      import.meta.env.VITE_URL
-                    }/api/upload/image`,
+                      import.meta.env.VITE_BASE
+                    }/api/upload/images`,
                   }}
                   onEditorChange={handleQuiz}
                 />
               </Box>
+
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={clickAudio}
+              >
+                {audio ? audio.name : "Upload Audio"}
+              </Button>
+
+              <input
+                ref={inputRef}
+                onChange={handleAudio}
+                type="file"
+                multiple
+                accept="audio/*"
+                style={{ display: "none" }}
+              />
 
               {type === "1" && renderEditors()}
 

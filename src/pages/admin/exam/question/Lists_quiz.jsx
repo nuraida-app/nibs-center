@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Backdrop,
   Box,
   Button,
@@ -134,12 +135,18 @@ const Lists_quiz = ({ data, load }) => {
               }}
             >
               <Box sx={{ width: "90%" }}>
-                <Box sx={{ display: "flex", gap: "10px" }}>
+                <Box sx={{ display: "flex", gap: "10px", mb: 2 }}>
                   <Typography>{index + 1}.</Typography>
                   <Typography
                     dangerouslySetInnerHTML={createMarkup(item.quiz)}
                   />
                 </Box>
+
+                {item.audio ? (
+                  <audio controls>
+                    <source src={item.audio} type="audio/mp3" />
+                  </audio>
+                ) : null}
 
                 <Box
                   sx={{
@@ -149,116 +156,120 @@ const Lists_quiz = ({ data, load }) => {
                     gap: "5px",
                   }}
                 >
-                  <Box
-                    sx={{ display: "flex", gap: "10px", alignItems: "center" }}
-                  >
-                    <Box
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        border: "1px solid red",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        bgcolor: item.key === "A" ? "red" : null,
-                        color: item.key === "A" ? "white" : "black",
-                      }}
+                  {item.answer_1 ? (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      style={{ justifyContent: "flex-start" }}
                     >
-                      A
-                    </Box>
-                    <Box
-                      dangerouslySetInnerHTML={createMarkup(item.answer_1)}
-                    />
-                  </Box>
-                  <Box
-                    sx={{ display: "flex", gap: "10px", alignItems: "center" }}
-                  >
-                    <Box
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        border: "1px solid red",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        bgcolor: item.key === "B" ? "red" : null,
-                        color: item.key === "B" ? "white" : "black",
-                      }}
+                      <Avatar
+                        sx={{
+                          width: 30,
+                          height: 30,
+                          fontSize: 14,
+                          mr: 2,
+                          bgcolor: item.key === "A" ? "red" : null,
+                        }}
+                      >
+                        A
+                      </Avatar>
+                      <Box
+                        dangerouslySetInnerHTML={createMarkup(item.answer_1)}
+                      />
+                    </Button>
+                  ) : null}
+
+                  {item.answer_2 ? (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      style={{ justifyContent: "flex-start" }}
                     >
-                      B
-                    </Box>
-                    <Box
-                      dangerouslySetInnerHTML={createMarkup(item.answer_2)}
-                    />
-                  </Box>
-                  <Box
-                    sx={{ display: "flex", gap: "10px", alignItems: "center" }}
-                  >
-                    <Box
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        border: "1px solid red",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        bgcolor: item.key === "C" ? "red" : null,
-                        color: item.key === "C" ? "white" : "black",
-                      }}
+                      <Avatar
+                        sx={{
+                          width: 30,
+                          height: 30,
+                          fontSize: 14,
+                          mr: 2,
+                          bgcolor: item.key === "B" ? "red" : null,
+                        }}
+                      >
+                        B
+                      </Avatar>
+                      <Box
+                        dangerouslySetInnerHTML={createMarkup(item.answer_2)}
+                      />
+                    </Button>
+                  ) : null}
+
+                  {item.answer_3 ? (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      style={{ justifyContent: "flex-start" }}
                     >
-                      C
-                    </Box>
-                    <Box
-                      dangerouslySetInnerHTML={createMarkup(item.answer_3)}
-                    />
-                  </Box>
-                  <Box
-                    sx={{ display: "flex", gap: "10px", alignItems: "center" }}
-                  >
-                    <Box
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        border: "1px solid red",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        bgcolor: item.key === "D" ? "red" : null,
-                        color: item.key === "D" ? "white" : "black",
-                      }}
+                      <Avatar
+                        sx={{
+                          width: 30,
+                          height: 30,
+                          fontSize: 14,
+                          mr: 2,
+                          bgcolor: item.key === "C" ? "red" : null,
+                        }}
+                      >
+                        C
+                      </Avatar>
+                      <Box
+                        dangerouslySetInnerHTML={createMarkup(item.answer_3)}
+                      />
+                    </Button>
+                  ) : null}
+
+                  {item.answer_4 ? (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      style={{ justifyContent: "flex-start" }}
                     >
-                      D
-                    </Box>
-                    <Box
-                      dangerouslySetInnerHTML={createMarkup(item.answer_4)}
-                    />
-                  </Box>
-                  <Box
-                    sx={{ display: "flex", gap: "10px", alignItems: "center" }}
-                  >
-                    <Box
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        border: "1px solid red",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        bgcolor: item.key === "E" ? "red" : null,
-                        color: item.key === "E" ? "white" : "black",
-                      }}
+                      <Avatar
+                        sx={{
+                          width: 30,
+                          height: 30,
+                          fontSize: 14,
+                          mr: 2,
+                          bgcolor: item.key === "D" ? "red" : null,
+                        }}
+                      >
+                        D
+                      </Avatar>
+                      <Box
+                        dangerouslySetInnerHTML={createMarkup(item.answer_4)}
+                      />
+                    </Button>
+                  ) : null}
+
+                  {item.answer_5 ? (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      style={{ justifyContent: "flex-start" }}
                     >
-                      E
-                    </Box>
-                    <Box
-                      dangerouslySetInnerHTML={createMarkup(item.answer_5)}
-                    />
-                  </Box>
+                      <Avatar
+                        sx={{
+                          width: 30,
+                          height: 30,
+                          fontSize: 14,
+                          mr: 2,
+                          bgcolor: item.key === "E" ? "red" : null,
+                        }}
+                      >
+                        E
+                      </Avatar>
+                      <Box
+                        dangerouslySetInnerHTML={createMarkup(item.answer_5)}
+                      />
+                    </Button>
+                  ) : null}
                 </Box>
               </Box>
               <Box
