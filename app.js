@@ -3,6 +3,8 @@ import bodyParser from "body-parser";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import userRoutes from "./router/users.js";
 import gradeRoutes from "./router/grade.js";
@@ -13,6 +15,10 @@ import examRoutes from "./router/exam.js";
 import roomsRoutes from "./router/rooms.js";
 import questionRoutes from "./router/question.js";
 import answerRoutes from "./router/answer.js";
+import uploadRoutes from "./router/upload.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -48,5 +54,7 @@ app.use("/api/exams", examRoutes);
 app.use("/api/rooms", roomsRoutes);
 app.use("/api/quizes", questionRoutes);
 app.use("/api/answers", answerRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/upload", express.static(path.join(__dirname, "upload")));
 
 export default app;
