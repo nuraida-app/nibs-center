@@ -10,6 +10,7 @@ import Analysis from "./Analysis";
 import Scores from "./Scores";
 import Essay from "./Essay/Essay";
 import { getStudentsByGrade } from "../../../../Redux/user/S_action";
+import { getLogs } from "../../../../Redux/logs/Log_action";
 
 const D_content = () => {
   const params = useParams();
@@ -29,6 +30,8 @@ const D_content = () => {
     dispatch(detailRoom(roomId));
 
     dispatch(getStudentsByGrade(grade));
+
+    dispatch(getLogs(id));
   }, [id, grade]);
 
   const renderComponent = () => {

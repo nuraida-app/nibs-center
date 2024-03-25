@@ -14,6 +14,7 @@ import {
   TableHead,
   TableRow,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
@@ -24,15 +25,17 @@ import { getExamByGrade } from "../../../Redux/exam/E_action";
 import { red } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { createLog } from "../../../Redux/logs/Log_action";
 
 const columns = [
   { id: 1, label: "No", minWidth: 30 },
   { id: 2, label: "Exam", minWidth: 170 },
   { id: 3, label: "Teacher", minWidth: 170 },
-  { id: 4, label: "Date", minWidth: 170 },
-  { id: 5, label: "Duration", minWidth: 170 },
-  { id: 6, label: "Status", minWidth: 170 },
-  { id: 7, label: "Action", minWidth: 30 },
+  { id: 4, label: "Start", minWidth: 170 },
+  { id: 5, label: "End", minWidth: 170 },
+  { id: 6, label: "Duration", minWidth: 170 },
+  { id: 7, label: "Status", minWidth: 170 },
+  { id: 8, label: "Action", minWidth: 30 },
 ];
 
 const E_list = () => {
@@ -41,6 +44,9 @@ const E_list = () => {
 
   const { user, isAuthLoading } = useSelector((state) => state.auth);
   const { eg_loading, exams } = useSelector((state) => state.examsByGrade);
+  const { logLoading, logSuccess, logMsg, logError } = useSelector(
+    (state) => state.createLog
+  );
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -67,23 +73,42 @@ const E_list = () => {
   const [grade, setGrade] = useState("");
   const [code, setCode] = useState("");
   const [inputCode, setInputCode] = useState("");
+  const [start, setStart] = useState(null);
+  const [end, setEnd] = useState(null);
 
-  const confirm = (id, name, grade, code) => {
+  const confirm = (id, name, grade, code, start, end) => {
     setOpen(true);
     setId(id);
     setName(name);
     setGrade(grade);
     setCode(code);
+    setStart(start);
+    setEnd(end);
   };
 
   // Start
   const startExam = () => {
     if (code === inputCode) {
-      navigate(`/start-exam/${id}/${name}/grade/${grade}`);
+      const data = {
+        student: user?.nis,
+        exam: id,
+      };
+
+      dispatch(createLog(data));
     } else {
       toast.error("Code is not valid");
     }
   };
+
+  useEffect(() => {
+    if (logSuccess) {
+      navigate(`/start-exam/${id}/${name}/grade/${grade}/${start}/${end}`);
+
+      console.log(logMsg);
+    } else {
+      console.log(logError);
+    }
+  }, [logSuccess, logMsg, logError, id, name, grade, navigate]);
 
   return (
     <Box
@@ -138,17 +163,36 @@ const E_list = () => {
 
               <TableBody>
                 {filtered?.map((item, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={index} hover>
                     <TableCell align="center">{index + 1}</TableCell>
                     <TableCell>{item.exam_name}</TableCell>
                     <TableCell align="center">{item.name}</TableCell>
                     <TableCell align="center">
                       {item.date_start
-                        ? new Date(item.date_start).toLocaleDateString("id-ID")
+                        ? new Date(item.date_start).toLocaleDateString(
+                            "id-ID",
+                            { hour: "numeric", minute: "numeric" }
+                          )
+                        : "-"}
+                    </TableCell>
+                    <TableCell align="center">
+                      {item.date_start
+                        ? new Date(item.date_end).toLocaleDateString("id-ID", {
+                            hour: "numeric",
+                            minute: "numeric",
+                          })
                         : "-"}
                     </TableCell>
                     <TableCell align="center">{item.time} Minutes</TableCell>
-                    <TableCell align="center">Status</TableCell>
+                    <TableCell align="center">
+                      <Typography fontWeight={700}>
+                        {new Date(item.date_start) > new Date()
+                          ? "Not started"
+                          : new Date(item.date_end) < new Date()
+                          ? "Finished"
+                          : "Started"}
+                      </Typography>
+                    </TableCell>
                     <TableCell align="center">
                       <Tooltip title="Start">
                         <IconButton
@@ -157,7 +201,9 @@ const E_list = () => {
                               item._id,
                               item.exam_name,
                               item.grade,
-                              item.code
+                              item.code,
+                              item.date_start,
+                              item.date_end
                             )
                           }
                         >
@@ -195,16 +241,22 @@ const E_list = () => {
               gap: 3,
             }}
           >
-            <Input
-              fullWidth
-              type="text"
-              placeholder="Enter Code"
-              value={inputCode}
-              onChange={(e) => setInputCode(e.target.value)}
-            />
-            <Button variant="contained" color="error" onClick={startExam}>
-              verify
-            </Button>
+            {logLoading ? (
+              <Loader />
+            ) : (
+              <>
+                <Input
+                  fullWidth
+                  type="text"
+                  placeholder="Enter Code"
+                  value={inputCode}
+                  onChange={(e) => setInputCode(e.target.value)}
+                />
+                <Button variant="contained" color="error" onClick={startExam}>
+                  verify
+                </Button>
+              </>
+            )}
           </Box>
         </Fade>
       </Modal>

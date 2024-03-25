@@ -17,10 +17,13 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../../../Redux/auth/auth_action";
 import Loader from "../../components/loader/Loader";
+import Student_Protection from "../../Student_Protection";
 
 const pages = ["Products", "Pricing", "Blog"];
 
 const Topbar = () => {
+  Student_Protection();
+
   const dispatch = useDispatch();
 
   const [anchorElNav, setAnchorElNav] = useState(null);

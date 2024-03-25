@@ -7,6 +7,7 @@ import {
   Modal,
   Pagination,
   TextareaAutosize,
+  Typography,
 } from "@mui/material";
 import { Fragment, useState, useEffect, useRef, useMemo } from "react";
 import { Editor } from "@tinymce/tinymce-react";
@@ -270,9 +271,10 @@ const E_questions = ({ quiz, load }) => {
           <Box
             sx={{
               p: 2,
-              minHeight: 250,
+              minHeight: 350,
               borderRadius: 2,
               bgcolor: "whitesmoke",
+              overflow: "auto",
             }}
             dangerouslySetInnerHTML={createMarkup(question.quiz)}
           />
@@ -301,7 +303,7 @@ const E_questions = ({ quiz, load }) => {
                         width: 30,
                         height: 30,
                         fontSize: 12,
-                        bgcolor: answers.find(
+                        bgcolor: answers?.find(
                           (answer) =>
                             answer.quiz_id === question._id && answer.mc === "A"
                         )
@@ -311,7 +313,9 @@ const E_questions = ({ quiz, load }) => {
                     >
                       A
                     </Avatar>
-                    {question.answer_1}
+                    <Typography
+                      dangerouslySetInnerHTML={createMarkup(question.answer_1)}
+                    />
                   </Button>
                 ) : null}
 
@@ -336,7 +340,7 @@ const E_questions = ({ quiz, load }) => {
                         width: 30,
                         height: 30,
                         fontSize: 12,
-                        bgcolor: answers.find(
+                        bgcolor: answers?.find(
                           (answer) =>
                             answer.quiz_id === question._id && answer.mc === "B"
                         )
@@ -346,7 +350,9 @@ const E_questions = ({ quiz, load }) => {
                     >
                       B
                     </Avatar>
-                    {question.answer_2}
+                    <Typography
+                      dangerouslySetInnerHTML={createMarkup(question.answer_2)}
+                    />
                   </Button>
                 ) : null}
 
@@ -371,7 +377,7 @@ const E_questions = ({ quiz, load }) => {
                         width: 30,
                         height: 30,
                         fontSize: 12,
-                        bgcolor: answers.find(
+                        bgcolor: answers?.find(
                           (answer) =>
                             answer.quiz_id === question._id && answer.mc === "C"
                         )
@@ -381,7 +387,9 @@ const E_questions = ({ quiz, load }) => {
                     >
                       C
                     </Avatar>
-                    {question.answer_3}
+                    <Typography
+                      dangerouslySetInnerHTML={createMarkup(question.answer_3)}
+                    />
                   </Button>
                 ) : null}
 
@@ -406,7 +414,7 @@ const E_questions = ({ quiz, load }) => {
                         width: 30,
                         height: 30,
                         fontSize: 12,
-                        bgcolor: answers.find(
+                        bgcolor: answers?.find(
                           (answer) =>
                             answer.quiz_id === question._id && answer.mc === "D"
                         )
@@ -416,7 +424,9 @@ const E_questions = ({ quiz, load }) => {
                     >
                       D
                     </Avatar>
-                    {question.answer_4}
+                    <Typography
+                      dangerouslySetInnerHTML={createMarkup(question.answer_4)}
+                    />
                   </Button>
                 ) : null}
 
@@ -441,7 +451,7 @@ const E_questions = ({ quiz, load }) => {
                         width: 30,
                         height: 30,
                         fontSize: 12,
-                        bgcolor: answers.find(
+                        bgcolor: answers?.find(
                           (answer) =>
                             answer.quiz_id === question._id && answer.mc === "E"
                         )
@@ -451,7 +461,9 @@ const E_questions = ({ quiz, load }) => {
                     >
                       E
                     </Avatar>
-                    {question.answer_5}
+                    <Typography
+                      dangerouslySetInnerHTML={createMarkup(question.answer_5)}
+                    />
                   </Button>
                 ) : null}
               </Box>

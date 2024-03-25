@@ -52,6 +52,7 @@ import {
   getMyAnswerReducer,
   updateAnswerReducer,
 } from "./Redux/answer/A_reducer";
+import { createLogReducer, getLogsReducers } from "./Redux/logs/Log_reducer";
 
 const reducer = {
   auth: authReducer,
@@ -99,6 +100,9 @@ const reducer = {
   rooms: getRoomsReducer,
   r_add: addRoomReducer,
   r_updel: updelRoomReducer,
+
+  createLog: createLogReducer,
+  logs: getLogsReducers,
 };
 
 const initialState = {};

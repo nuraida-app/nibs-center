@@ -73,12 +73,7 @@ export const authReducer = (state = {}, action) => {
     case AUTH_RESET:
     case LOGOUT_RESET:
       return {
-        ...state,
-        isAuthenticated: false,
-        isAuthLoading: false,
-        logoutLoading: false,
-        authError: null,
-        user: null,
+        state: null,
       };
     default:
       return state;

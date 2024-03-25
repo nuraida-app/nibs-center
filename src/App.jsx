@@ -107,7 +107,7 @@ function App() {
         <Route path="/student-exam" element={<E_page />} />
 
         <Route
-          path="/start-exam/:id/:name/grade/:gradeId"
+          path="/start-exam/:id/:name/grade/:gradeId/:start/:end"
           element={<E_Start />}
         />
       </Routes>

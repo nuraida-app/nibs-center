@@ -18,6 +18,7 @@ import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { orange, red } from "@mui/material/colors";
 import Loader from "../../../component/Loader/Loader";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 const columns = [
   { id: "1", label: "No", minWidth: 30 },
@@ -32,6 +33,8 @@ const columns = [
 ];
 
 const Students = ({ load, data }) => {
+  const { logs, getLog } = useSelector((state) => state.logs);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -89,7 +92,7 @@ const Students = ({ load, data }) => {
         />
       </Box>
 
-      {load ? (
+      {load || getLog ? (
         <Loader />
       ) : (
         <Paper sx={{ width: "100%", overflow: "hidden", mt: 2 }}>
@@ -115,33 +118,48 @@ const Students = ({ load, data }) => {
                       page * rowsPerPage + rowsPerPage
                     )
                   : filtered
-                )?.map((student, index) => (
-                  <TableRow key={student._id}>
-                    <TableCell align="center">{index + 1}</TableCell>
-                    <TableCell align="center">{student.nis}</TableCell>
-                    <TableCell>{student.name}</TableCell>
-                    <TableCell align="center">{student.class}</TableCell>
-                    <TableCell align="center">-</TableCell>
-                    <TableCell align="center">-</TableCell>
-                    <TableCell align="center">-</TableCell>
-                    <TableCell align="center">-</TableCell>
-                    <TableCell align="center">
-                      <Box>
-                        <Tooltip title="Unlock">
-                          <IconButton sx={{ color: red[800] }}>
-                            <KeyOffIcon />
-                          </IconButton>
-                        </Tooltip>
+                )?.map((student, index) => {
+                  const log = logs?.find(
+                    (log) => log.student === Number(student.nis)
+                  );
 
-                        <Tooltip title="Reset">
-                          <IconButton sx={{ color: orange[800] }}>
-                            <RestartAltIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                  return (
+                    <TableRow key={student._id}>
+                      <TableCell align="center">{index + 1}</TableCell>
+                      <TableCell align="center">{student.nis}</TableCell>
+                      <TableCell>{student.name}</TableCell>
+                      <TableCell align="center">{student.class}</TableCell>
+                      <TableCell align="center">
+                        {log
+                          ? new Date(log.date).toLocaleDateString("id-ID", {
+                              hour: "numeric",
+                              minute: "numeric",
+                            })
+                          : "-"}
+                      </TableCell>
+                      <TableCell align="center">{log ? log.ip : "-"}</TableCell>
+                      <TableCell align="center">
+                        {log ? log.browser : "-"}
+                      </TableCell>
+                      <TableCell align="center">-</TableCell>
+                      <TableCell align="center">
+                        <Box>
+                          <Tooltip title="Unlock">
+                            <IconButton sx={{ color: red[800] }}>
+                              <KeyOffIcon />
+                            </IconButton>
+                          </Tooltip>
+
+                          <Tooltip title="Reset">
+                            <IconButton sx={{ color: orange[800] }}>
+                              <RestartAltIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>

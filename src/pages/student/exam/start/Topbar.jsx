@@ -1,6 +1,47 @@
 import { AppBar, Box, Container, Toolbar, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Topbar = ({ user, load, exam }) => {
+  const params = useParams();
+  const navigate = useNavigate();
+
+  const start = params.start;
+  const end = params.end;
+
+  const [timeLeft, setTimeLeft] = useState(null);
+
+  useEffect(() => {
+    const startTime = new Date(start).getTime();
+    const endTime = new Date(end).getTime();
+
+    const countdown = setInterval(() => {
+      const now = new Date().getTime();
+      const difference = endTime - now;
+
+      if (difference <= 0) {
+        clearInterval(countdown);
+        navigate("/student-exam");
+      } else {
+        const hours = Math.floor(
+          (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        setTimeLeft(
+          `${hours < 10 ? "0" + hours : hours}:${
+            minutes < 10 ? "0" + minutes : minutes
+          }:${seconds < 10 ? "0" + seconds : seconds}`
+        );
+      }
+    }, 1000);
+
+    return () => clearInterval(countdown);
+  }, [start, end, navigate]);
+
   return (
     <AppBar
       position="fixed"
@@ -30,15 +71,17 @@ const Topbar = ({ user, load, exam }) => {
             {exam?.exam_name}
           </Typography>
 
-          <Typography
-            align="center"
-            sx={{
-              color: "white",
-              width: `calc(100% - ${exam?.exam_name.length * 12}px)`,
-            }}
-          >
-            00 : 00 : 00
-          </Typography>
+          {timeLeft !== null ? (
+            <Typography
+              align="center"
+              sx={{
+                color: "white",
+                width: `calc(100% - ${exam?.exam_name.length * 12}px)`,
+              }}
+            >
+              {timeLeft}
+            </Typography>
+          ) : null}
         </Toolbar>
       </Container>
     </AppBar>
