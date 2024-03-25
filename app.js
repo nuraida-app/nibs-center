@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import useragent from "express-useragent";
 
 import userRoutes from "./router/users.js";
 import gradeRoutes from "./router/grade.js";
@@ -16,6 +17,7 @@ import roomsRoutes from "./router/rooms.js";
 import questionRoutes from "./router/question.js";
 import answerRoutes from "./router/answer.js";
 import uploadRoutes from "./router/upload.js";
+import logRoutes from "./router/log.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,6 +33,7 @@ app.use(
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(useragent.express());
 
 app.use(
   session({
@@ -56,5 +59,6 @@ app.use("/api/quizes", questionRoutes);
 app.use("/api/answers", answerRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/upload", express.static(path.join(__dirname, "upload")));
+app.use("/api/log", logRoutes);
 
 export default app;
