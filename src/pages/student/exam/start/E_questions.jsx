@@ -184,8 +184,7 @@ const E_questions = ({ quiz, load }) => {
       sx={{
         p: 5,
         position: "relative",
-        top: 60,
-        height: "100vh",
+        top: 50,
         display: "flex",
         flexDirection: "column",
         gap: 2,

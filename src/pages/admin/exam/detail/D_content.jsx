@@ -11,6 +11,10 @@ import Scores from "./Scores";
 import Essay from "./Essay/Essay";
 import { getStudentsByGrade } from "../../../../Redux/user/S_action";
 import { getLogs } from "../../../../Redux/logs/Log_action";
+import {
+  getScores,
+  getStudentsAnswers,
+} from "../../../../Redux/answer/A_action";
 
 const D_content = () => {
   const params = useParams();
@@ -21,6 +25,7 @@ const D_content = () => {
   const { rDetailLoad, room } = useSelector((state) => state.rooms);
   const { detail_load, exam_detail } = useSelector((state) => state.exams);
   const { sloading, students } = useSelector((state) => state.studentsByGrade);
+  const { answers, loading } = useSelector((state) => state.studentAnswer);
 
   const [state, setState] = useState("students");
 
@@ -32,6 +37,10 @@ const D_content = () => {
     dispatch(getStudentsByGrade(grade));
 
     dispatch(getLogs(id));
+
+    dispatch(getStudentsAnswers(id));
+
+    dispatch(getScores(id));
   }, [id, grade]);
 
   const renderComponent = () => {
@@ -45,6 +54,7 @@ const D_content = () => {
             sLoad={sloading}
             students={students}
             exam={exam_detail}
+            answers={answers}
           />
         );
       case "scores":
@@ -56,6 +66,7 @@ const D_content = () => {
             sLoad={sloading}
             students={students}
             exam={exam_detail}
+            answers={answers}
           />
         );
       default:

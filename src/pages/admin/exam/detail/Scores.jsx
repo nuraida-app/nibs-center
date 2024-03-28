@@ -16,18 +16,26 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import Loader from "../../../component/Loader/Loader";
 import { useState } from "react";
-
-const columns = [
-  { id: "1", label: "No", minWidth: 20 },
-  { id: "2", label: "NIS", minWidth: 100 },
-  { id: "3", label: "Name", minWidth: 175 },
-  { id: "5", label: "Class", minWidth: 30 },
-  { id: "6", label: "MC", minWidth: 30 },
-  { id: "7", label: "Essay", minWidth: 30 },
-  { id: "8", label: "Total", minWidth: 30 },
-];
+import { useSelector } from "react-redux";
 
 const Scores = ({ sLoad, students }) => {
+  const { scoreLoading, scores } = useSelector((state) => state.scores);
+  const { exam_detail: exam, detail_Loading: load } = useSelector(
+    (state) => state.exams
+  );
+
+  const columns = [
+    { id: "1", label: "No", minWidth: 20 },
+    { id: "2", label: "NIS", minWidth: 100 },
+    { id: "3", label: "Name", minWidth: 175 },
+    { id: "5", label: "Class", minWidth: 30 },
+    { id: "6", label: "Correct", minWidth: 30 },
+    { id: "7", label: "Wrong", minWidth: 30 },
+    { id: "8", label: `MC ${exam.pg}%`, minWidth: 30 },
+    { id: "9", label: `Essay ${exam.essay}%`, minWidth: 30 },
+    { id: "10", label: "Total", minWidth: 30 },
+  ];
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -103,7 +111,7 @@ const Scores = ({ sLoad, students }) => {
         </Button>
       </Box>
 
-      {sLoad ? (
+      {sLoad || scoreLoading || load ? (
         <Loader />
       ) : (
         <Paper sx={{ width: "100%", overflow: "hidden", mt: 2 }}>
@@ -129,14 +137,35 @@ const Scores = ({ sLoad, students }) => {
                       page * rowsPerPage + rowsPerPage
                     )
                   : filtered
-                )?.map((student, index) => (
-                  <TableRow key={student._id}>
-                    <TableCell align="center">{index + 1}</TableCell>
-                    <TableCell align="center">{student.nis}</TableCell>
-                    <TableCell>{student.name}</TableCell>
-                    <TableCell align="center">{student.class}</TableCell>
-                  </TableRow>
-                ))}
+                )?.map((student, index) => {
+                  const score = scores?.find(
+                    (score) => score.nis === Number(student.nis)
+                  );
+
+                  return (
+                    <TableRow key={student._id}>
+                      <TableCell align="center">{index + 1}</TableCell>
+                      <TableCell align="center">{student.nis}</TableCell>
+                      <TableCell>{student.name}</TableCell>
+                      <TableCell align="center">{student.class}</TableCell>
+                      <TableCell align="center">
+                        {score ? score.correct_answer : 0}
+                      </TableCell>
+                      <TableCell align="center">
+                        {score ? score.wrong_answer : 0}
+                      </TableCell>
+                      <TableCell align="center">
+                        {score ? score.mcScore.toFixed(2) : 0}
+                      </TableCell>
+                      <TableCell align="center">
+                        {score ? score.essayScore.toFixed(2) : 0}
+                      </TableCell>
+                      <TableCell align="center">
+                        {score ? score.totalScore.toFixed(2) : 0}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>

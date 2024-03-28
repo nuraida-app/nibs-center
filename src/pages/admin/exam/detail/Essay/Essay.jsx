@@ -10,11 +10,16 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import Loader from "../../../../component/Loader/Loader";
-import { useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { giveScore } from "../../../../../Redux/answer/A_action";
+import { toast } from "react-toastify";
+import { give_score_reset } from "../../../../../Redux/answer/A_const";
 
 const columns = [
   { id: "1", label: "No", minWidth: 20 },
@@ -23,9 +28,20 @@ const columns = [
   { id: "5", label: "Class", minWidth: 30 },
 ];
 
-const Essay = ({ eload, sLoad, students, exam }) => {
+const createMarkup = (html) => {
+  return { __html: html };
+};
+
+const Essay = ({ eload, sLoad, students, exam, answers }) => {
+  const dispatch = useDispatch();
+
+  const { loading, success, message, error } = useSelector(
+    (state) => state.essayScore
+  );
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [essayScores, setEssayScores] = useState({});
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -35,8 +51,6 @@ const Essay = ({ eload, sLoad, students, exam }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
-  // SEARCH FUNCTION
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -50,7 +64,67 @@ const Essay = ({ eload, sLoad, students, exam }) => {
     setSearchTerm(e.target.value);
   };
 
+  const handleScoreChange = (key, score, answerId) => {
+    setEssayScores((prevScores) => ({
+      ...prevScores,
+      [key]: score,
+      [`${key}-answer_score`]: score, // Simpan answer_score ke dalam state essayScores
+    }));
+
+    // Jika nilai answer_score ada, simpan juga ke dalam state essayScores
+    setEssayScores((prevScores) => ({
+      ...prevScores,
+      [key]: score,
+      [`${key}-answer_score`]: score, // Simpan answer_score ke dalam state essayScores
+      [`${key}-answer_id`]: answerId, // Simpan answer_id ke dalam state essayScores
+    }));
+  };
+
+  const saveScores = () => {
+    for (const answerId in essayScores) {
+      const score = essayScores[answerId];
+      if (typeof score !== "undefined") {
+        const [nis, essayId] = answerId.split("-");
+        const answerIdToSave = essayScores[`${answerId}-answer_id`];
+
+        console.log("NIS:", nis, "Total Score:", score, "Answer ID:", essayId);
+
+        // Check if answerIdToSave is defined
+        if (typeof answerIdToSave !== "undefined") {
+          // Only dispatch giveScore action if the score and answerIdToSave are defined
+          dispatch(giveScore(answerIdToSave, { score }));
+        }
+      }
+    }
+  };
+
+  const calculateTotalScore = (student) => {
+    let totalScore = 0;
+    exam.questions.forEach((es) => {
+      const answer = answers.find(
+        (a) => a.nis.toString() === student.nis && a.quiz_id === es._id
+      );
+      const score = essayScores[`${student.nis}-${es._id}`];
+      if (score && answer) {
+        totalScore += parseInt(score);
+      }
+    });
+    return totalScore;
+  };
+
   const essay = exam?.questions.filter((item) => item.quiz_type === 2);
+
+  useEffect(() => {
+    if (success) {
+      toast.success(message);
+
+      dispatch({ type: give_score_reset });
+    } else {
+      toast.error(error);
+
+      dispatch({ type: give_score_reset });
+    }
+  }, [error, success, message]);
 
   return (
     <Box
@@ -85,7 +159,7 @@ const Essay = ({ eload, sLoad, students, exam }) => {
           <Input
             sx={{ width: "98%" }}
             type="text"
-            placeholder="Seacy By Name"
+            placeholder="Search By Name"
             onChange={serachFunction}
             value={searchTerm}
           />
@@ -109,53 +183,102 @@ const Essay = ({ eload, sLoad, students, exam }) => {
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
-                  {columns.map((item) => (
+                  {columns.map((column) => (
                     <TableCell
-                      key={item.id}
+                      key={column.id}
                       align="center"
-                      style={{ minWidth: item.minWidth }}
+                      style={{ minWidth: column.minWidth }}
                     >
-                      {item.label}
+                      {column.label}
                     </TableCell>
                   ))}
-
-                  {essay?.map((item, index) => (
-                    <>
-                      <TableCell
-                        key={item._id}
-                        align="center"
-                        style={{ maxWidth: 130 }}
-                      >
-                        {index + 1}
+                  {essay.map((item, index) => (
+                    <Fragment key={item._id}>
+                      <TableCell align="center" style={{ maxWidth: 130 }}>
+                        Essay {index + 1}
                       </TableCell>
-                      <TableCell
-                        key={item._id}
-                        align="center"
-                        style={{ minWidth: 20 }}
-                      >
-                        Score
+                      <TableCell align="center" style={{ width: 90 }}>
+                        Score {index + 1}
                       </TableCell>
-                    </>
+                    </Fragment>
                   ))}
-                  <TableCell align="center" style={{ minWidth: 20 }}>
-                    Total
+
+                  <TableCell align="center" style={{ width: 90 }}>
+                    Action
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {(rowsPerPage > 0
-                  ? filtered?.slice(
+                  ? filtered.slice(
                       page * rowsPerPage,
                       page * rowsPerPage + rowsPerPage
                     )
                   : filtered
-                )?.map((student, index) => (
-                  <TableRow key={student._id}>
-                    <TableCell align="center">{index + 1}</TableCell>
-                    <TableCell align="center">{student.nis}</TableCell>
-                    <TableCell>{student.name}</TableCell>
-                    <TableCell align="center">{student.class}</TableCell>
-                  </TableRow>
+                ).map((student, index) => (
+                  <Fragment key={student._id}>
+                    <TableRow hover>
+                      <TableCell align="center">{index + 1}</TableCell>
+                      <TableCell align="center">{student.nis}</TableCell>
+                      <TableCell>{student.name}</TableCell>
+                      <TableCell align="center">{student.class}</TableCell>
+                      {essay.map((es) => {
+                        const answer = answers?.find(
+                          (a) =>
+                            a.nis.toString() === student.nis &&
+                            a.quiz_id === es._id
+                        );
+
+                        return (
+                          <Fragment key={`essay-${es._id}`}>
+                            <TableCell align="center">
+                              {answer ? (
+                                <Typography
+                                  dangerouslySetInnerHTML={createMarkup(
+                                    answer.essay
+                                  )}
+                                  fontSize={14}
+                                />
+                              ) : (
+                                "No answer"
+                              )}
+                            </TableCell>
+                            <TableCell align="center">
+                              <Input
+                                type="number"
+                                value={
+                                  essayScores[`${student.nis}-${es._id}`] !==
+                                  undefined
+                                    ? essayScores[`${student.nis}-${es._id}`]
+                                    : typeof answer?.answer_score !==
+                                      "undefined"
+                                    ? answer.answer_score // Jika answer_score sudah ada, gunakan nilainya
+                                    : "" // Atau biarkan kosong jika tidak ada nilai sebelumnya
+                                }
+                                onChange={(e) =>
+                                  handleScoreChange(
+                                    `${student.nis}-${es._id}`,
+                                    e.target.value,
+                                    answer?._id
+                                  )
+                                }
+                              />
+                            </TableCell>
+                          </Fragment>
+                        );
+                      })}
+
+                      <TableCell align="center">
+                        <Button
+                          variant="contained"
+                          color="warning"
+                          onClick={saveScores}
+                        >
+                          {loading ? "..." : "save"}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  </Fragment>
                 ))}
               </TableBody>
             </Table>
@@ -163,7 +286,7 @@ const Essay = ({ eload, sLoad, students, exam }) => {
           <TablePagination
             rowsPerPageOptions={[10, 25, 100, 200]}
             component="div"
-            count={filtered ? filtered.length : 0}
+            count={filtered.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

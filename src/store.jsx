@@ -50,6 +50,9 @@ import {
   createAnswerReducer,
   getAnswerReducer,
   getMyAnswerReducer,
+  getScoresReducer,
+  getStudentsAnswersReducer,
+  giveScoreEssayReducer,
   updateAnswerReducer,
 } from "./Redux/answer/A_reducer";
 import { createLogReducer, getLogsReducers } from "./Redux/logs/Log_reducer";
@@ -93,9 +96,12 @@ const reducer = {
   q_upload: quizUploadReducer,
 
   answers: getAnswerReducer,
+  studentAnswer: getStudentsAnswersReducer,
   myAnswers: getMyAnswerReducer,
   a_add: createAnswerReducer,
   a_update: updateAnswerReducer,
+  essayScore: giveScoreEssayReducer,
+  scores: getScoresReducer,
 
   rooms: getRoomsReducer,
   r_add: addRoomReducer,

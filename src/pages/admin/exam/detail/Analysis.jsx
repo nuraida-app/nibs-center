@@ -15,7 +15,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import Loader from "../../../component/Loader/Loader";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 const columns = [
   { id: "1", label: "No", minWidth: 30 },
@@ -24,7 +24,7 @@ const columns = [
   { id: "5", label: "Class", minWidth: 30 },
 ];
 
-const Analysis = ({ eload, sLoad, students, exam }) => {
+const Analysis = ({ eload, sLoad, students, exam, answers }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -115,6 +115,7 @@ const Analysis = ({ eload, sLoad, students, exam }) => {
                       key={item.id}
                       align="center"
                       style={{ minWidth: item.minWidth }}
+                      rowSpan={2}
                     >
                       {item.label}
                     </TableCell>
@@ -122,6 +123,13 @@ const Analysis = ({ eload, sLoad, students, exam }) => {
 
                   {mc?.map((item, index) => (
                     <TableCell key={item._id}>{index + 1}</TableCell>
+                  ))}
+                </TableRow>
+                <TableRow>
+                  {mc?.map((item) => (
+                    <TableCell key={item._id} align="center">
+                      {item.key}
+                    </TableCell>
                   ))}
                 </TableRow>
               </TableHead>
@@ -132,14 +140,49 @@ const Analysis = ({ eload, sLoad, students, exam }) => {
                       page * rowsPerPage + rowsPerPage
                     )
                   : filtered
-                )?.map((student, index) => (
-                  <TableRow key={student._id}>
-                    <TableCell align="center">{index + 1}</TableCell>
-                    <TableCell align="center">{student.nis}</TableCell>
-                    <TableCell>{student.name}</TableCell>
-                    <TableCell align="center">{student.class}</TableCell>
-                  </TableRow>
-                ))}
+                )?.map((student, index) => {
+                  // Temukan jawaban untuk siswa ini
+
+                  const mcAnswers = answers?.filter(
+                    (item) =>
+                      item.quiz_type === 1 && item.nis === Number(student.nis)
+                  );
+
+                  return (
+                    <Fragment key={student._id}>
+                      <TableRow hover>
+                        <TableCell rowSpan={2} align="center">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell rowSpan={2} align="center">
+                          {student.nis}
+                        </TableCell>
+                        <TableCell rowSpan={2}>{student.name}</TableCell>
+                        <TableCell rowSpan={2} align="center">
+                          {student.class}
+                        </TableCell>
+                        {mc.map((item) => (
+                          <TableCell key={item._id}>
+                            {
+                              mcAnswers.find((ans) => ans.quiz_id === item._id)
+                                ?.mc
+                            }
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        {mc.map((item) => (
+                          <TableCell key={item._id}>
+                            {mcAnswers.find((ans) => ans.quiz_id === item._id)
+                              ?.mc === item.key
+                              ? 1
+                              : 0}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    </Fragment>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>

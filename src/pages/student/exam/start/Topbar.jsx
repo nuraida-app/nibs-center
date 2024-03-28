@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const Topbar = ({ user, load, exam }) => {
   const params = useParams();
-  const navigate = useNavigate();
 
   const start = params.start;
   const end = params.end;
@@ -21,7 +20,8 @@ const Topbar = ({ user, load, exam }) => {
 
       if (difference <= 0) {
         clearInterval(countdown);
-        navigate("/student-exam");
+
+        window.location.href = `${import.meta.env.VITE_DOMAIN}/student-exam`;
       } else {
         const hours = Math.floor(
           (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
@@ -40,7 +40,7 @@ const Topbar = ({ user, load, exam }) => {
     }, 1000);
 
     return () => clearInterval(countdown);
-  }, [start, end, navigate]);
+  }, [start, end]);
 
   return (
     <AppBar

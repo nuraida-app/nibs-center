@@ -18,7 +18,7 @@ const E_Start = () => {
     dispatch(getDetailExam(params.id));
   }, [params]);
   return (
-    <Box sx={{ position: "relative" }}>
+    <Box sx={{ height: "auto" }}>
       <Topbar user={user} load={isAuthLoading} exam={exam_detail} />
 
       <E_questions quiz={exam_detail?.questions} load={detail_load} />

@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/loader/Loader";
 import { useEffect, useState } from "react";
 import { getExamByGrade } from "../../../Redux/exam/E_action";
-import { red } from "@mui/material/colors";
+import { grey, red } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createLog } from "../../../Redux/logs/Log_action";
@@ -196,6 +196,13 @@ const E_list = () => {
                     <TableCell align="center">
                       <Tooltip title="Start">
                         <IconButton
+                          disabled={
+                            new Date(item.date_start) > new Date()
+                              ? true
+                              : new Date(item.date_end) < new Date()
+                              ? true
+                              : false
+                          }
                           onClick={() =>
                             confirm(
                               item._id,
@@ -207,7 +214,16 @@ const E_list = () => {
                             )
                           }
                         >
-                          <PlayCircleFilledIcon sx={{ color: red[800] }} />
+                          <PlayCircleFilledIcon
+                            sx={{
+                              color:
+                                new Date(item.date_start) > new Date()
+                                  ? grey[500]
+                                  : new Date(item.date_end) < new Date()
+                                  ? grey[500]
+                                  : red[800],
+                            }}
+                          />
                         </IconButton>
                       </Tooltip>
                     </TableCell>
