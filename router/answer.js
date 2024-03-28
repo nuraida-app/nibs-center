@@ -8,7 +8,7 @@ import {
 const router = express.Router();
 
 function countAnswerByStudentId(quiz, answers, exam) {
-  let studentScores = {};
+  let studentScores = [];
 
   // Mendapatkan bobot untuk setiap jenis soal
   const maxScore = 100;
@@ -19,45 +19,100 @@ function countAnswerByStudentId(quiz, answers, exam) {
   answers.forEach((answer) => {
     // Temukan pertanyaan (quiz) yang sesuai dengan id quiz_id pada jawaban
     const correspondingQuiz = quiz.find(
-      (quizItem) => quizItem._id === answer.quiz_id && quizItem.quiz_type === 1
+      (quizItem) => quizItem._id === answer.quiz_id
     );
 
     // Jika ada pertanyaan yang sesuai
     if (correspondingQuiz) {
-      const studentId = answer.student_id;
-      // Jika studentId belum ada dalam objek studentScores, inisialisasi dengan nilai awal
-      if (!studentScores[studentId]) {
-        studentScores[studentId] = {
-          student_id: studentId,
-          score: 0,
+      const studentId = answer.nis;
+      // Temukan indeks siswa jika sudah ada dalam array studentScores
+      const studentIndex = studentScores.findIndex(
+        (student) => student.nis === studentId
+      );
+
+      // Jika studentId belum ada dalam array studentScores, tambahkan
+      if (studentIndex === -1) {
+        studentScores.push({
+          nis: studentId,
           correct_answer: 0,
           wrong_answer: 0,
-        };
+          mcScore: 0,
+          essayScore: 0,
+          totalScore: 0,
+        });
       }
 
-      // Periksa apakah jawaban siswa sama dengan kunci jawaban
-      if (answer.answer === correspondingQuiz.key) {
-        // Jika sama, tambahkan ke jumlah jawaban benar
-        studentScores[studentId].correct_answer++;
-      } else {
-        // Jika tidak, tambahkan ke jumlah jawaban salah
-        studentScores[studentId].wrong_answer++;
+      const student = studentScores.find(
+        (student) => student.nis === studentId
+      );
+
+      // Periksa jenis soal
+      if (correspondingQuiz.quiz_type === 1) {
+        // Multiple Choice
+        // Periksa apakah jawaban siswa sama dengan kunci jawaban
+        if (answer.mc === correspondingQuiz.key) {
+          // Jika sama, tambahkan ke jumlah jawaban benar
+          student.correct_answer++;
+        } else {
+          // Jika tidak, tambahkan ke jumlah jawaban salah
+          student.wrong_answer++;
+        }
+      } else if (correspondingQuiz.quiz_type === 2) {
+        // Essay
+        // Tambahkan skor Essay
+        student.essayScore += (answer.answer_score || 0) * (exam.essay / 100);
       }
+
+      // Menghitung mcScore
+      // Jumlah jawaban benar pada pilihan ganda
+      const correctMCQ = student.correct_answer;
+      // Menghitung persentase jawaban benar dari total soal pilihan ganda dan dikalikan dengan bobot
+      student.mcScore = (correctMCQ / quizCount) * mcqWeight;
+
+      // Hitung total skor
+      student.totalScore = student.mcScore + student.essayScore;
     }
   });
 
-  // Menghitung skor untuk jawaban pilihan ganda
-  Object.values(studentScores).forEach((student) => {
-    student.score += (student.correct_answer / quizCount) * mcqWeight;
-    // Menggunakan toFixed(2) untuk membulatkan skor menjadi 2 digit di belakang koma
-    student.score = parseFloat(student.score.toFixed(2));
-  });
-
-  // Menghitung skor untuk jawaban esai
-  // Anda perlu menambahkan logika di sini untuk memperoleh skor jawaban esai dan menambahkannya ke skor siswa
-
-  return Object.values(studentScores);
+  return studentScores;
 }
+
+// GET STUDENTS' SCORE BASED ON EXAM
+router.get(
+  "/get-scores/:exam_id",
+  authenticatedUser,
+  authorizeRoles("admin", "teacher", "student"),
+  async (req, res) => {
+    try {
+      const answer_data = await client.query(
+        "SELECT * FROM answers WHERE exam_id = $1",
+        [req.params.exam_id]
+      );
+
+      const answers = answer_data.rows;
+
+      const question_data = await client.query(
+        "SELECT * FROM questions WHERE exam_id = $1",
+        [req.params.exam_id]
+      );
+
+      const quiz = question_data.rows;
+
+      const find_exam = await client.query(
+        "SELECT * FROM exams WHERE _id = $1",
+        [req.params.exam_id]
+      );
+
+      const exam = find_exam.rows[0];
+
+      const studentScores = countAnswerByStudentId(quiz, answers, exam);
+
+      res.status(200).json(studentScores);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
 
 // CREATE ANSWER
 router.post(
@@ -102,6 +157,7 @@ router.post(
 );
 
 // GET STUDENTS ANSWER BY EXAM AND NIS
+// Student
 router.get(
   "/get-my-answer/:exam_id",
   authenticatedUser,
@@ -120,6 +176,26 @@ router.get(
   }
 );
 
+// GET STUDENTS ANSWER BY EXAM
+// Teacher and admin
+router.get(
+  "/students-answers/:examId",
+  authenticatedUser,
+  authorizeRoles("admin", "teacher"),
+  async (req, res) => {
+    try {
+      const data = await client.query(
+        "SELECT * FROM answers WHERE exam_id = $1",
+        [req.params.examId]
+      );
+
+      res.status(200).json(data.rows);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
 // GET STUDENTS' ESSAY ANSWER
 router.get(
   "/get-essay-answer/:exam_id",
@@ -128,7 +204,7 @@ router.get(
   async (req, res) => {
     try {
       const answers_data = await client.query(
-        "SELECT users._id, users.name, questions.quiz, answers.quiz_id, answers.answer_essay, answers.answer_score FROM answers INNER JOIN users ON answers.student_id = users._id INNER JOIN questions ON answers.quiz_id = questions._id WHERE questions.exam_id = $1",
+        "SELECT users._id, users.name, questions.quiz, answers.quiz_id, answers.essay, answers.answer_score FROM answers INNER JOIN users ON answers.student_id = users._id INNER JOIN questions ON answers.quiz_id = questions._id WHERE questions.exam_id = $1",
         [req.params.exam_id]
       );
 
@@ -156,38 +232,41 @@ router.get(
   }
 );
 
-// GET STUDENTS' SCORE BASED ON EXAM
-router.get(
-  "/get-scores/:exam_id",
+// UPDATE ANSWER FOR GIVING ESSAY SCORE
+router.put(
+  "/update-answer-score/:answerId",
   authenticatedUser,
-  authorizeRoles("admin", "teacher", "student"),
+  authorizeRoles("admin", "teacher"),
   async (req, res) => {
     try {
-      const answer_data = await client.query(
-        "SELECT * FROM answers WHERE exam_id = $1",
-        [req.params.exam_id]
+      // Mengonversi nilai score ke integer
+      const score = parseInt(req.body.score);
+
+      // Validasi bahwa score adalah integer
+      if (isNaN(score)) {
+        return res
+          .status(400)
+          .json({ error: "Skor harus berupa bilangan bulat." });
+      }
+
+      const answer = await client.query(
+        "SELECT * FROM answers WHERE _id = $1",
+        [req.params.answerId]
       );
 
-      const answers = answer_data.rows;
+      if (answer.rows.length === 0) {
+        return res.status(404).json({ error: "Jawaban tidak ditemukan." });
+      }
 
-      const question_data = await client.query(
-        "SELECT * FROM questions WHERE exam_id = $1",
-        [req.params.exam_id]
+      await client.query(
+        "UPDATE answers SET answer_score = $1 WHERE _id = $2",
+        [score, req.params.answerId]
       );
 
-      const quiz = question_data.rows;
-
-      const find_exam = await client.query(
-        "SELECT * FROM exams WHERE _id = $1",
-        [req.params.exam_id]
-      );
-
-      const exam = find_exam.rows[0];
-
-      const studentScores = countAnswerByStudentId(quiz, answers, exam);
-
-      res.status(200).json(studentScores);
+      // Kembalikan respons berhasil
+      return res.status(200).json({ message: "Berhasil disimpan." });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ error: error.message });
     }
   }
